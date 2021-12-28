@@ -7,7 +7,7 @@ def terminate():
     sys.exit()
 
 
-def game_circle():
+def game_loop():
     pygame.init()
     pygame.display.set_caption('Name')
     size = width, height = 1250, 750
