@@ -49,11 +49,11 @@ def generate_custom_font(image, all_symbols, color, size_x=5, size_y=8):
     return all_symbols
 
 
-def ShowText(text, x, y, spacing, max_width, font, screen):
+def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
     text += ' '
-    xx = x
-    yy = y
+    origin_x = margin_x
     word = ''
+
     for char in text:
         if char not in [' ', '\n']:
             try:
@@ -62,56 +62,31 @@ def ShowText(text, x, y, spacing, max_width, font, screen):
             except KeyError:
                 pass
         else:
-            WordTotal = 0
-            for char2 in word:
-                WordTotal += font[char2][0]
-                WordTotal += spacing
-            if WordTotal + x - xx > max_width:
-                x = xx
-                y += font['Height']
-            for char2 in word:
-                image = font[str(char2)][1]
-                screen.blit(image, (x, y))
-                x += font[char2][0]
-                x += spacing
+            word_length = sum(map(lambda s: font[s][0] + spacing, word))
+
+            if word_length + margin_x - origin_x > max_width:
+                margin_x = origin_x
+                margin_y += font['Height']
+
+            for sym in word:
+                image = font[sym][1]
+                screen.blit(image, (margin_x, margin_y))
+                margin_x += font[sym][0] + spacing
+
             if char == ' ':
-                x += font['A'][0]
-                x += spacing
+                # пробел занимает 3 пикселя
+                margin_x += 3 + spacing
             else:
-                x = xx
-                y += font['Height']
+                margin_x = origin_x
+                margin_y += font['Height']
+
             word = ''
-        if x - xx > max_width:
-            x = xx
-            y += font['Height']
-    return x, y
 
+        if margin_x - origin_x > max_width:
+            margin_x = origin_x
+            margin_y += font['Height']
 
-def start_screen(screen):
-    intro_text = "IMMERSED"
-
-    fon = pygame.transform.scale(load_image('background_start_screen.png'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
-    text_coord = 200
-    for line in intro_text:
-        string_rendered = font.render(line, True, pygame.Color('white'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                return
-        pygame.display.flip()
-        clock.tick(FPS)
+    return margin_x, margin_y
 
 
 # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
@@ -126,7 +101,3 @@ font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H
         '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3], '8': [3], '9': [3],
         '(': [2], ')': [2]}
 custom_font = generate_custom_font('Fonts/small_font.png', font, (255, 255, 255))
-
-
-def new_game_screen(screen):
-    pass
