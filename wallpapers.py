@@ -31,6 +31,10 @@ def generate_custom_font(image, all_symbols, color, size_x=5, size_y=8):
     return all_symbols
 
 
+# Функция рендерит заданный текст с кастомным шрифтом.
+# Функция принимает сам текст, величину горизонтального отступа от левого края холста,
+# величину вертикального отступа ог верхней границы холста, расстояние между символами,
+# максимальную длину строки(в пикселях), шрифт и холст.
 def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
     text += ' '
     origin_x = margin_x
@@ -46,29 +50,51 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
         else:
             word_length = sum(map(lambda s: font[s][0] + spacing, word))
 
-            if word_length + margin_x - origin_x > max_width:
-                margin_x = origin_x
-                margin_y += font['Height']
+            if char == ' ':
+                # пробел занимает 3 пикселя
+                margin_x += 3 + spacing
 
             for sym in word:
                 image = font[sym][1]
                 screen.blit(image, (margin_x, margin_y))
                 margin_x += font[sym][0] + spacing
 
-            if char == ' ':
-                # пробел занимает 3 пикселя
-                margin_x += 3 + spacing
-            else:
+            word = ''
+            if char == '\n' or word_length + margin_x - origin_x > max_width:
                 margin_x = origin_x
                 margin_y += font['Height']
-
-            word = ''
 
         if margin_x - origin_x > max_width:
             margin_x = origin_x
             margin_y += font['Height']
 
-    return margin_x, margin_y
+
+def start_screen(screen, font):
+    intro_text = """Вы астронавт-любитель, пытающийся найти драгоценности в открытом космосе. 
+    Но в один момент вы сталкиваетесь с целой бандой пиратов, и, стараясь оторваться от них, 
+    улетаете в неразведанные места. При попытке сделать трюк вокруг системы планет что-то 
+    пошло не по плану: вы слишком близко подлетели к одной из них и не смогли справиться с силой притяжения. 
+    После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить 
+    его и продолжить свой путь."""
+
+    command_text = "Нажмите любую клавишу на клавиатуре что-бы продолжть."
+
+    fon = pygame.Surface(load_image('background_start_screen.png'))
+    screen.blit(fon, (0, 0))
+
+    render_text(intro_text, 10, 20, 1, 500, font, screen)
+    render_text(command_text, 100, 300, 1, 500, font, screen)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                return
+
+        pygame.display.flip()
+        CLOCK.tick(FPS)
 
 
 # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
