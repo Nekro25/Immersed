@@ -2,7 +2,7 @@ from PIL import Image
 from CONSTANTS import *
 
 
-def picure_to_matrix():
+def picture_to_matrix():
     file_name = f"data/{MAP_NAME}"
     map_list = []
     player_pos = (0, 0)
@@ -15,7 +15,7 @@ def picure_to_matrix():
         layer = []
         for j in range(y):
             layer.append(BLOCKS[pixels[i, j]])
-            if pixels[i, j] == PLAYER:
+            if BLOCKS[pixels[i, j]] == PLAYER:
                 player_pos = (j, i)
         map_list.append(layer)
 
