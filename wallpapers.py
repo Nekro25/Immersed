@@ -77,7 +77,7 @@ def start_screen(screen, font):
     После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить 
     его и продолжить свой путь."""
 
-    command_text = "Нажмите любую клавишу на клавиатуре что-бы продолжть."
+    command_text = "Нажмите любую клавишу на клавиатуре, чтобы продолжить."
 
     fon = pygame.Surface(load_image('background_start_screen.png'))
     screen.blit(fon, (0, 0))
@@ -113,4 +113,4 @@ font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H
         '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3],
         '8': [3], '9': [3],
         '(': [2], ')': [2]}
-custom_font = generate_custom_font('Fonts/small_font.png', font, (255, 255, 255))
+custom_font = generate_custom_font('Fonts/font.png', font, (255, 255, 255))
