@@ -3,6 +3,7 @@ import sys
 
 from CONSTANTS import *
 from picture2matrix import picture_to_matrix
+from wallpapers import *
 
 
 def terminate():
@@ -57,7 +58,7 @@ class Player(pygame.sprite.Sprite):
 
 class Camera:
     def __init__(self):
-        self.x_coef = 0  # коэффицент для выравнивания по камере
+        self.x_coef = 0  # коэффициент для выравнивания по камере
         self.y_coef = 0
 
     def update(self, object):
@@ -95,26 +96,41 @@ def game_loop():
     pygame.init()
     pygame.display.set_caption('Immersed')
     size = WIDTH, HEIGHT
+
     screen = pygame.display.set_mode(size)
+
     running = True
+    is_main_menu = True
+
     all_sprites = pygame.sprite.Group()
     ground_group = pygame.sprite.Group()
     player_group = pygame.sprite.Group()
+
     game_map, pos = picture_to_matrix()
     player = Player(*pos)
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            if pygame.key.get_pressed()[pygame.K_w]:
-                player.move_up(ground_group)
-            if pygame.key.get_pressed()[pygame.K_a]:
-                player.move_left(ground_group)
-            if pygame.key.get_pressed()[pygame.K_s]:
-                player.move_down(ground_group)
-            if pygame.key.get_pressed()[pygame.K_d]:
-                player.move_right(ground_group)
+
+            if event.type == pygame.KEYDOWN:
+                if pygame.key.get_pressed()[pygame.K_w]:
+                    player.move_up(ground_group)
+                if pygame.key.get_pressed()[pygame.K_a]:
+                    player.move_left(ground_group)
+                if pygame.key.get_pressed()[pygame.K_s]:
+                    player.move_down(ground_group)
+                if pygame.key.get_pressed()[pygame.K_d]:
+                    player.move_right(ground_group)
+
+            if is_main_menu:
+                main_menu(event, screen)
+
+            MANAGER.process_events(event)
+        MANAGER.update()
         player.rect = player.image.get_rect().move(player.cell_x, player.cell_y)
         draw_screen(screen, player, game_map)
+
         pygame.display.flip()
     pygame.quit()

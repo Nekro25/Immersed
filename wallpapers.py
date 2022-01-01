@@ -1,5 +1,8 @@
 import pygame
+import pygame_gui as gui
+
 import os
+
 from CONSTANTS import *
 from gameplay import terminate
 
@@ -97,7 +100,43 @@ def start_screen(screen, font):
         CLOCK.tick(FPS)
 
 
-# Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
+def main_menu(event, screen):
+    background = load_image('background_start_screen')
+    screen.blit(background, (0, 0))
+
+    MANAGER.draw_ui(screen)
+    new_game_button = gui.elements.UIButton(
+        relative_rect=pygame.Rect((20, 275), (100, 50)),
+        text="НОВАЯ ИГРА",
+        manager=MANAGER
+    )
+    continue_button = gui.elements.UIButton(
+        relative_rect=pygame.Rect((150, 275), (100, 50)),
+        text="ПРОДОЛЖИТЬ",
+        manager=MANAGER
+    )
+    exit_button = gui.elements.UIButton(
+        relative_rect=pygame.Rect((280, 275), (100, 50)),
+        text="ВЫЙТИ",
+        manager=MANAGER
+    )
+    settings_button = gui.elements.UIButton(
+        relative_rect=pygame.Rect((410, 275), (100, 50)),
+        text="НАСТРОЙКИ",
+        manager=MANAGER
+    )
+    if event.user_type == gui.UI_BUTTON_PRESSED:
+        if event.ui_element == new_game_button:
+            pass
+        if event.ui_element == continue_button:
+            pass
+        if event.ui_element == settings_button:
+            pass
+        if event.ui_element == exit_button:
+            pass
+
+
+    # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
 # это количество пикселей, которое занимает нарисованный вариант символа в ширину.
 font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3],
         'I': [3], 'J': [3],

@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui as gui
 import os
 
 
@@ -51,6 +52,7 @@ FPS = 60
 BLOCK_SIZE = 50
 
 CLOCK = pygame.time.Clock()
+MANAGER = gui.UIManager((WIDTH, HEIGHT))
 
 GROUND_img = load_image('ground.png')
 PLAYER_img = load_image('Player.png')
