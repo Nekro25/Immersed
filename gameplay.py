@@ -92,7 +92,7 @@ def game_loop():
     pygame.display.set_caption('Immersed')
     size = WIDTH, HEIGHT
 
-    screen = pygame.display.set_mode(size)
+    screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
     running = True
     is_main_menu = True
@@ -119,11 +119,11 @@ def game_loop():
                 if pygame.key.get_pressed()[pygame.K_d]:
                     player.move_right(ground_group)
 
-            if is_main_menu:
-                main_menu(event, screen)
-
-            MANAGER.process_events(event)
-        MANAGER.update()
+            # if is_main_menu:
+            #     main_menu(event, screen)
+            #
+            # MANAGER.process_events(event)
+        # MANAGER.update()
         player.rect = player.image.get_rect().move(player.cell_x, player.cell_y)
         draw_screen(screen, player, game_map)
 

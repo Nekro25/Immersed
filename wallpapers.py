@@ -10,13 +10,12 @@ from CONSTANTS import *
 def generate_custom_font(image, all_symbols, color, size_x=5, size_y=8):
     image = load_image(image)
 
-    new_surface = pygame.Surface((image.get_width(), image.get_height())).convert()
-    new_surface.fill(color)
+    image.fill(color)
 
     image.set_colorkey((0, 0, 0))
-    new_surface.blit(image, (0, 0))
+    image.blit(image, (0, 0))
 
-    image = new_surface.copy()
+    image = image.copy()
     image.set_colorkey((255, 255, 255))
 
     num = 0
@@ -100,7 +99,7 @@ def start_screen(screen, font):
 
 
 def main_menu(event, screen):
-    background = load_image('background_start_screen')
+    background = load_image('background_start_screen.png')
     screen.blit(background, (0, 0))
 
     MANAGER.draw_ui(screen)
