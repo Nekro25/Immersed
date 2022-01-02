@@ -1,6 +1,7 @@
 import pygame
 import pygame_gui as gui
 import os
+import sys
 
 
 class FileError(Exception):
@@ -19,6 +20,11 @@ def load_image(filename, color_key=None):
             color_key = image.get_at((0, 0))
         image.set_colorkey(color_key)
     return image
+
+
+def terminate():
+    pygame.quit()
+    sys.exit()
 
 
 WATER = 0

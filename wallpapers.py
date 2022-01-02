@@ -4,7 +4,6 @@ import pygame_gui as gui
 import os
 
 from CONSTANTS import *
-from gameplay import terminate
 
 
 # генерируем кастомный шрифт, нарисованный по пикселям.

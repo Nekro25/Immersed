@@ -6,11 +6,6 @@ from picture2matrix import picture_to_matrix
 from wallpapers import *
 
 
-def terminate():
-    pygame.quit()
-    sys.exit()
-
-
 class Block(pygame.sprite.Sprite):
     def __init__(self, x, y, img, *args):
         super().__init__(*args)
