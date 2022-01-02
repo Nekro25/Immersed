@@ -51,14 +51,15 @@ BLOCKS = {
 }
 
 MAP_NAME = 'map.png'
-WIDTH = 1250
-HEIGHT = 750
+pygame.init()
+WIDTH, HEIGHT = pygame.display.get_desktop_sizes()[0]
 FPS = 60
 
 BLOCK_SIZE = 50
+PLAYER_SIZE = 50
 
 CLOCK = pygame.time.Clock()
-MANAGER = gui.UIManager((WIDTH, HEIGHT))
+# MANAGER = gui.UIManager((WIDTH, HEIGHT))
 
 GROUND_img = load_image('ground.png')
 PLAYER_img = load_image('Player.png')
