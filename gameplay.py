@@ -71,7 +71,6 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, group):
             self.rect.x -= self.speed * 2
             self.map_x -= self.speed
-
             return
         self.rect.x -= self.speed
         self.x = self.map_x // BLOCK_SIZE
@@ -154,6 +153,8 @@ def game_loop():
     player = Player(*pos)
     camera = Camera()
 
+    main_menu(screen, manager)
+
     while running:
         tick = CLOCK.tick(FPS)
         for event in pygame.event.get():
@@ -171,9 +172,6 @@ def game_loop():
                     player.move_right(barier_group)
                 if pygame.key.get_pressed()[pygame.K_ESCAPE]:
                     terminate()
-
-            if is_main_menu:
-                is_main_menu = main_menu(screen, manager)
 
         player.rect = player.image.get_rect().move(
             WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x,
