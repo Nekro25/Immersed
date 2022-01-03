@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 0
         self.x = x
         self.y = y
-        self.speed = 10
+        self.speed = 5
         self.cell_x = 0
         self.cell_y = 0
         self.map_x = x * BLOCK_SIZE
@@ -34,9 +34,9 @@ class Player(pygame.sprite.Sprite):
 
     def move_up(self, group):
         self.map_y -= self.speed
-        self.rect.y -= self.speed * 2
+        self.rect.y -= self.speed
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.y += self.speed * 2
+            self.rect.y += self.speed
             self.map_y += self.speed
             return
         self.rect.y += self.speed
