@@ -52,7 +52,7 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     num = 0
 
     for char in all_symbols.keys():
-        image.set_clip(pygame.Rect(((size_x + 1) * num), 0, size_x, size_y))
+        image.set_clip(pygame.Rect(((block_width + barrier) * num), 0, block_width, block_height))
         symbol_image = image.subsurface(image.get_clip())
 
         all_symbols[char].append(symbol_image)
