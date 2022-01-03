@@ -2,10 +2,13 @@ import pygame
 import pygame_gui as gui
 import copy
 
+import sys
 import os
 
 from CONSTANTS import *
 
+# Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
+# это количество пикселей, которое занимает нарисованный вариант символа в ширину.
 font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3],
         'I': [3], 'J': [3],
         'K': [3], 'L': [3], 'M': [5], 'N': [3], 'O': [3], 'P': [3], 'Q': [3], 'R': [3],
@@ -22,39 +25,59 @@ font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H
         '(': [2], ')': [2]}
 
 
-# генерируем кастомный шрифт, нарисованный по пикселям.
-def generate_custom_font(image, fnt, color, size_x=5, size_y=8):
+def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barrier=1):
+    """
+    Функция генерирует кастомный шрифт, нарисованный по пикселям.
+
+    :param image:   картинка с нарисованными символами;
+    :param fnt:     словарь с символами;
+    :param color:   цвет шрифта;
+    :param block_width:   ширина ячейки с символом;
+    :param block_height:  высота ячейки с символом;
+    :param barrier: толщина перегородки между символами на рисунке;
+    :return:
+    """
+
+    # создаем копию словаря с символами, чтобы не изменять исходный вариант
     all_symbols = copy.deepcopy(fnt)
 
-    image = load_image(image)
+    # создаем дополнительный холст, для нанесения "трафарета" из символов кастомного шрифта
+    extra_surface = pygame.Surface(image.get_size()).convert()
+    extra_surface.fill(color)
+    extra_surface.blit(image, (0, 0))
 
-    image.fill(color)
-
-    image.set_colorkey((0, 0, 0))
-    image.blit(image, (0, 0))
-
-    image = image.copy()
+    image = extra_surface.copy()
     image.set_colorkey((255, 255, 255))
 
     num = 0
 
+    # вырезаем нарисованные символы и добавляем их к соответствующим символам в словаре
     for char in all_symbols.keys():
-        image.set_clip(pygame.Rect(((size_x + 1) * num), 0, size_x, size_y))
+        image.set_clip(pygame.Rect(((block_width + barrier) * num), 0, block_width, block_height))
         symbol_image = image.subsurface(image.get_clip())
 
         all_symbols[char].append(symbol_image)
         num += 1
 
-    all_symbols['Height'] = size_y
+    all_symbols['Height'] = block_height
 
     return all_symbols
 
 
-# Функция рендерит заданный текст с кастомным шрифтом.
-# Функция принимает сам текст, величину горизонтального отступа от левого края холста,
-# величину вертикального отступа ог верхней границы холста, расстояние между символами,
-# максимальную длину строки(в пикселях), шрифт и холст.
 def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
+    """
+    Функция рендерит заданный текст с кастомным шрифтом.
+
+    :param text:        текст для вывода;
+    :param margin_x:    величина горизонтального отступа от левой границы холста;
+    :param margin_y:    величина вертикального отступа от верхней границы холста;
+    :param spacing:     расстояние между символами;
+    :param max_width:   максимальная длина строки(в пикселях);
+    :param font:        шрифт;
+    :param screen:      холст;
+    :return:
+    """
+
     text += ' '
     origin_x = margin_x
     word = ''
@@ -67,12 +90,14 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
             except KeyError:
                 pass
         else:
+            # длина слова(в пикселях) вместе с символами пустой строки и пропусками
             word_length = sum(map(lambda s: font[s][0] + spacing, word))
 
             if char == ' ':
                 # пробел занимает 3 пикселя
                 margin_x += 3 + spacing
 
+            # отображаем символы по одному в положенном месте на экране
             for sym in word:
                 image = font[sym][1]
                 screen.blit(image, (margin_x, margin_y))
@@ -88,6 +113,8 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
             margin_y += font['Height']
 
 
+# ---- Функция показывает заставку, когда игрок начал новую игру ----
+# P.S. ФУНКЦИЯ НЕ ГОТОВА
 def start_screen(screen, font):
     intro_text = """Вы астронавт-любитель, пытающийся найти драгоценности в открытом космосе. 
     Но в один момент вы сталкиваетесь с целой бандой пиратов, и, стараясь оторваться от них, 
@@ -97,9 +124,6 @@ def start_screen(screen, font):
     его и продолжить свой путь."""
 
     command_text = "Нажмите любую клавишу на клавиатуре, чтобы продолжить."
-
-    fon = pygame.Surface(load_image('background_start_screen.png'))
-    screen.blit(fon, (0, 0))
 
     render_text(intro_text, 10, 20, 1, 500, font, screen)
     render_text(command_text, 100, 300, 1, 500, font, screen)
@@ -118,10 +142,13 @@ def start_screen(screen, font):
 
 def main_menu(screen, manager):
     background = load_image('all_image(shallow water).png')
-    title_font = generate_custom_font('Fonts/font.png', font, (255, 255, 255), size_x=15, size_y=24)
-    render_text("IMMERSED", 50, 50, 3, 500, title_font, background)
+
+    big_font_picture = pygame.transform.scale(load_image('Fonts/font.png', color_key=(0, 0, 0)), (2586, 48))
+    title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
+                                      block_width=30, block_height=48, barrier=6)
     screen.blit(background, (0, 0))
 
+    # ---- кнопки в главном меню ----
     new_game_button = gui.elements.UIButton(
         relative_rect=pygame.Rect((420, 320), (100, 50)),
         text="НОВАЯ ИГРА",
@@ -142,7 +169,9 @@ def main_menu(screen, manager):
         text="НАСТРОЙКИ",
         manager=manager
     )
+    # ---- кнопки в главном меню ----
 
+    # ---- цикл главного меню ----
     while True:
         tick = CLOCK.tick(FPS)
         for event in pygame.event.get():
@@ -157,15 +186,13 @@ def main_menu(screen, manager):
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:
-                        pass
+                        sys.exit()
             manager.process_events(event)
+
         manager.update(tick)
         manager.draw_ui(screen)
-        render_text("IMMERSED", 50, 50, 3, 500, title_font, screen)
+        render_text("IMMERSED", 370, 200, 60, 1000, title_font, screen)
         pygame.display.flip()
         CLOCK.tick(FPS)
 
-
-# Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
-# это количество пикселей, которое занимает нарисованный вариант символа в ширину.
-custom_font = generate_custom_font('Fonts/font.png', font, (255, 255, 255))
+# custom_font = generate_custom_font(load_image('Fonts/font.png'), font, (255, 254, 255))
