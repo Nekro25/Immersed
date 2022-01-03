@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 0
         self.x = x
         self.y = y
-        self.speed = 5
+        self.speed = 10
         self.cell_x = 0
         self.cell_y = 0
         self.map_x = x * BLOCK_SIZE
@@ -34,9 +34,9 @@ class Player(pygame.sprite.Sprite):
 
     def move_up(self, group):
         self.map_y -= self.speed
-        self.rect.y -= self.speed
+        self.rect.y -= self.speed * 2
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.y += self.speed
+            self.rect.y += self.speed * 2
             self.map_y += self.speed
             return
         self.rect.y += self.speed
@@ -44,10 +44,10 @@ class Player(pygame.sprite.Sprite):
         self.cell_y = self.map_y % BLOCK_SIZE
 
     def move_down(self, group):
-        self.rect.y += self.speed
         self.map_y += self.speed
+        self.rect.y += self.speed * 2
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.y -= self.speed
+            self.rect.y -= self.speed * 2
             self.map_y -= self.speed
             return
         self.rect.y -= self.speed
@@ -56,9 +56,9 @@ class Player(pygame.sprite.Sprite):
 
     def move_left(self, group):
         self.map_x -= self.speed
-        self.rect.x -= self.speed
+        self.rect.x -= self.speed * 2
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.x += self.speed
+            self.rect.x += self.speed * 2
             self.map_x += self.speed
             return
         self.rect.x += self.speed
@@ -67,9 +67,9 @@ class Player(pygame.sprite.Sprite):
 
     def move_right(self, group):
         self.map_x += self.speed
-        self.rect.x += self.speed
+        self.rect.x += self.speed * 2
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.x -= self.speed
+            self.rect.x -= self.speed * 2
             self.map_x -= self.speed
 
             return
