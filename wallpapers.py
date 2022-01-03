@@ -157,7 +157,7 @@ def main_menu(screen, manager):
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:
-                        pass
+                        terminate()
             manager.process_events(event)
         manager.update(tick)
         manager.draw_ui(screen)
