@@ -16,8 +16,6 @@ class Block(pygame.sprite.Sprite):
         self.y = y
         self.image = img
         self.rect = self.image.get_rect().move(50 * self.x, 50 * self.y)
-        self.screen_x = 0  # позиция относительно экрана
-        self.screen_y = 0
 
 
 class Player(pygame.sprite.Sprite):
@@ -79,14 +77,6 @@ class Player(pygame.sprite.Sprite):
         self.x = int(self.map_x) // BLOCK_SIZE
         self.cell_x = int(self.map_x) % BLOCK_SIZE
 
-    def colliding(self, game_map):
-        if (game_map[(self.map_x + PLAYER_SIZE) // BLOCK_SIZE][self.y] or
-            game_map[self.map_x // BLOCK_SIZE][self.y] or game_map[self.x][
-                (self.map_y + PLAYER_SIZE) // BLOCK_SIZE] or game_map[self.x][
-                self.map_y // BLOCK_SIZE]) == GROUND:
-            return True
-        return False
-
 
 class Camera:
     def __init__(self):
@@ -104,13 +94,9 @@ class Camera:
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera):
-    barier_group = pygame.sprite.Group()
-    screen_group = pygame.sprite.Group()
-    bg = pygame.sprite.Sprite(screen_group)
-    bg.image = BACKGROUND_img
-
-    bg.rect = bg.image.get_rect()
+def draw_screen(screen, player, map, camera, bg):
+    barrier_group = pygame.sprite.Group()
+    screen_group = pygame.sprite.Group(bg, player)
     coef_y = 0
     for y in range(player.y - HEIGHT % BLOCK_SIZE // 2 - 1,
                    player.y + HEIGHT % BLOCK_SIZE // 2 + 4):
@@ -118,22 +104,19 @@ def draw_screen(screen, player, map, camera):
         for x in range(player.x - WIDTH % BLOCK_SIZE // 2,
                        player.x + HEIGHT % BLOCK_SIZE // 2 + 10):
             if map[x][y] == GROUND:
-                block = Block(coef_x, coef_y, GROUND_img, screen_group)
-                barier_group.add(block)
+                barrier_group.add(Block(coef_x, coef_y, GROUND_img, screen_group))
             elif map[x][y] == PLAYER:
-                block = Block(coef_x, coef_y, WATER_img, screen_group)
+                Block(coef_x, coef_y, WATER_img, screen_group)
             elif map[x][y] == WATER:
-                block = Block(coef_x, coef_y, WATER_img, screen_group)
+                Block(coef_x, coef_y, WATER_img, screen_group)
             coef_x += 1
         coef_y += 1
-    screen_group.add(bg)
-    screen_group.add(player)
     camera.track(player)
     for obj in screen_group:
         if obj != bg:
             camera.update(obj)
     screen_group.draw(screen)
-    return barier_group
+    return barrier_group
 
 
 def moving(dict, group, player):
@@ -155,13 +138,16 @@ def game_loop():
 
     running = True
 
-    barier_group = pygame.sprite.Group()
+    barrier_group = pygame.sprite.Group()
 
     manager = gui.UIManager((WIDTH, HEIGHT))
 
     game_map, pos = picture_to_matrix()
     player = Player(*pos)
     camera = Camera()
+    bg = pygame.sprite.Sprite()
+    bg.image = BACKGROUND_img
+    bg.rect = bg.image.get_rect()
 
     main_menu(screen, manager)
 
@@ -192,12 +178,11 @@ def game_loop():
                 if event.key == pygame.K_ESCAPE:
                     terminate()
 
-        moving(buttons_pressed, barier_group, player)
+        moving(buttons_pressed, barrier_group, player)
 
-        player.rect = player.image.get_rect().move(
-            WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x,
-            HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2)
-        barier_group = draw_screen(screen, player, game_map, camera)
+        player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
+        player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
+        barrier_group = draw_screen(screen, player, game_map, camera, bg)
 
         CLOCK.tick(FPS)
         pygame.display.flip()
