@@ -25,7 +25,45 @@ font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H
         'а': [3], 'б': [3], 'в': [3], 'г': [3], 'д': [5], 'е': [3], 'ж': [5], 'з': [3], 'и': [3], 'й': [3],
         'к': [3], 'л': [3], 'м': [5], 'н': [3], 'о': [3], 'п': [3], 'р': [3], 'с': [3], 'т': [3], 'у': [3],
         'ф': [5], 'х': [3], 'ц': [4], 'ч': [3], 'ш': [5], 'щ': [5], 'ъ': [5], 'ы': [5], 'ь': [4], 'э': [3],
-        'ю': [5], 'я': [3]}
+        'ю': [5], 'я': [3]
+        }
+
+manager = gui.UIManager((WIDTH, HEIGHT))
+
+# ---- кнопки в главном меню ----
+new_game_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (MAIN_MENU_BUTTON_X_MARGIN, MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+    ),
+    text="НОВАЯ ИГРА",
+    manager=manager
+)
+continue_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (MAIN_MENU_BUTTON_X_MARGIN + MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING, MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+    ),
+    text="ПРОДОЛЖИТЬ",
+    manager=manager
+)
+exit_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+    ),
+    text="ВЫЙТИ",
+    manager=manager
+)
+settings_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+    ),
+    text="НАСТРОЙКИ",
+    manager=manager
+)
+# ---- кнопки в главном меню ----
 
 
 def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barrier=1):
@@ -142,44 +180,8 @@ def start_screen(screen, font):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen, manager, background):
+def main_menu(screen, background):
     screen.blit(background, (0, 0))
-
-    # ---- кнопки в главном меню ----
-    # расстояние между кнопками - 30 пикселей
-    new_game_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect(
-            (MAIN_MENU_BUTTON_X_MARGIN, MAIN_MENU_BUTTON_Y_MARGIN),
-            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
-        ),
-        text="НОВАЯ ИГРА",
-        manager=manager
-    )
-    continue_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect(
-            (MAIN_MENU_BUTTON_X_MARGIN + MAIN_MENU_BUTTON_WIDTH + 30, MAIN_MENU_BUTTON_Y_MARGIN),
-            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
-        ),
-        text="ПРОДОЛЖИТЬ",
-        manager=manager
-    )
-    exit_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect(
-            (MAIN_MENU_BUTTON_X_MARGIN + 2 * MAIN_MENU_BUTTON_WIDTH + 60, MAIN_MENU_BUTTON_Y_MARGIN),
-            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
-        ),
-        text="ВЫЙТИ",
-        manager=manager
-    )
-    settings_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect(
-            (MAIN_MENU_BUTTON_X_MARGIN + 3 * MAIN_MENU_BUTTON_WIDTH + 90, MAIN_MENU_BUTTON_Y_MARGIN),
-            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
-        ),
-        text="НАСТРОЙКИ",
-        manager=manager
-    )
-    # ---- кнопки в главном меню ----
 
     # ---- цикл главного меню ----
     while True:
@@ -205,4 +207,4 @@ def main_menu(screen, manager, background):
         pygame.display.flip()
         CLOCK.tick(FPS)
 
-# custom_font = generate_custom_font(load_image('Fonts/font.png'), font, (255, 254, 255))
+# custom_font = generate_custom_font(load_image('Fonts/font_eng.png'), font, (255, 254, 255))

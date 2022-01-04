@@ -149,16 +149,23 @@ def game_loop():
     bg.rect = bg.image.get_rect()
 
     # ---- ресурсы для главного меню ----
-    manager = gui.UIManager((WIDTH, HEIGHT))
-    big_font_picture = pygame.transform.scale(load_image('Fonts/font.png', color_key=(0, 0, 0)), (2586, 48))
+    big_font_picture = pygame.transform.scale(
+        load_image(FONT_PATH, color_key=(0, 0, 0)),
+        (FONT_IMG_WIDTH * 6, FONT_IMG_HEIGHT * 6)
+    )
     title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
-                                      block_width=30, block_height=48, barrier=6)
+                                      block_width=FONT_BLOCK_WIDTH * 6,
+                                      block_height=FONT_BLOCK_HEIGHT * 6,
+                                      barrier=FONT_BARRIER * 6)
+
     background = load_image('all_image(shallow water).png')
+
     # 231 - половина длины надписи "IMMERSED" в пикселях
     render_text("IMMERSED", (WIDTH / 2) - 231, HEIGHT / 3.5, 60, 1000, title_font, background)
+
     # ---- ресурсы для главного меню ----
 
-    main_menu(screen, manager, background)
+    main_menu(screen, background)
 
     while running:
         for event in pygame.event.get():
@@ -185,10 +192,7 @@ def game_loop():
                 if event.key == pygame.K_d:
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
-                    main_menu(screen, manager, background)
-
-        # if is_main_menu:
-        #     is_main_menu = main_menu(screen, manager, background)
+                    main_menu(screen, background)
 
         moving(buttons_pressed, barrier_group, player)
 
