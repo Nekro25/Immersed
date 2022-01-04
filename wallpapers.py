@@ -9,20 +9,23 @@ from CONSTANTS import *
 
 # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
 # это количество пикселей, которое занимает нарисованный вариант символа в ширину.
-font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3],
-        'I': [3], 'J': [3],
-        'K': [3], 'L': [3], 'M': [5], 'N': [3], 'O': [3], 'P': [3], 'Q': [3], 'R': [3],
-        'S': [3], 'T': [3],
+font = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3], 'I': [3], 'J': [3],
+        'K': [3], 'L': [3], 'M': [5], 'N': [3], 'O': [3], 'P': [3], 'Q': [3], 'R': [3], 'S': [3], 'T': [3],
         'U': [3], 'V': [3], 'W': [5], 'X': [3], 'Y': [3], 'Z': [3],
-        'a': [3], 'b': [3], 'c': [3], 'd': [3], 'e': [3], 'f': [3], 'g': [3], 'h': [3],
-        'i': [1], 'j': [2],
-        'k': [3], 'l': [3], 'm': [5], 'n': [3], 'o': [3], 'p': [3], 'q': [3], 'r': [2],
-        's': [3], 't': [3],
+        'a': [3], 'b': [3], 'c': [3], 'd': [3], 'e': [3], 'f': [3], 'g': [3], 'h': [3], 'i': [1], 'j': [2],
+        'k': [3], 'l': [3], 'm': [5], 'n': [3], 'o': [3], 'p': [3], 'q': [3], 'r': [2], 's': [3], 't': [3],
         'u': [3], 'v': [3], 'w': [5], 'x': [3], 'y': [3], 'z': [3],
         '.': [1], '-': [3], ',': [2], ':': [1], '+': [3], '\'': [1], '!': [1], '?': [3],
-        '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3],
-        '8': [3], '9': [3],
-        '(': [2], ')': [2]}
+        '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3], '8': [3], '9': [3],
+        '(': [2], ')': [2],
+        'А': [3], 'Б': [3], 'В': [3], 'Г': [3], 'Д': [5], 'Е': [3], 'Ж': [5], 'З': [3], 'И': [4], 'Й': [5],
+        'К': [3], 'Л': [3], 'М': [5], 'Н': [3], 'О': [3], 'П': [3], 'Р': [3], 'С': [3], 'Т': [3], 'У': [3],
+        'Ф': [5], 'Х': [3], 'Ц': [4], 'Ч': [3], 'Ш': [5], 'Щ': [5], 'Ъ': [5], 'Ы': [5], 'Ь': [4], 'Э': [3],
+        'Ю': [5], 'Я': [3],
+        'а': [3], 'б': [3], 'в': [3], 'г': [3], 'д': [5], 'е': [3], 'ж': [5], 'з': [3], 'и': [3], 'й': [3],
+        'к': [3], 'л': [3], 'м': [5], 'н': [3], 'о': [3], 'п': [3], 'р': [3], 'с': [3], 'т': [3], 'у': [3],
+        'ф': [5], 'х': [3], 'ц': [4], 'ч': [3], 'ш': [5], 'щ': [5], 'ъ': [5], 'ы': [5], 'ь': [4], 'э': [3],
+        'ю': [5], 'я': [3]}
 
 
 def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barrier=1):
@@ -63,7 +66,7 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     return all_symbols
 
 
-def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
+def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, space_length=3):
     """
     Функция рендерит заданный текст с кастомным шрифтом.
 
@@ -74,6 +77,7 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
     :param max_width:   максимальная длина строки(в пикселях);
     :param font:        шрифт;
     :param screen:      холст;
+    :param space_length длина пробела(в пикселях);
     :return:
     """
 
@@ -92,9 +96,8 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen):
             # длина слова(в пикселях) вместе с символами пустой строки и пропусками
             word_length = sum(map(lambda s: font[s][0] + spacing, word))
 
-            if char == ' ':
-                # пробел занимает 3 пикселя
-                margin_x += 3 + spacing
+            if char == ' ' and char is not text[-1]:
+                margin_x += space_length + spacing
 
             # отображаем символы по одному в положенном месте на экране
             for sym in word:
@@ -139,29 +142,40 @@ def start_screen(screen, font):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen, manager, font):
-    background = load_image('all_image(shallow water).png')
-
+def main_menu(screen, manager, background):
     screen.blit(background, (0, 0))
 
     # ---- кнопки в главном меню ----
+    # расстояние между кнопками - 30 пикселей
     new_game_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect((420, 320), (100, 50)),
+        relative_rect=pygame.Rect(
+            (MAIN_MENU_BUTTON_X_MARGIN, MAIN_MENU_BUTTON_Y_MARGIN),
+            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+        ),
         text="НОВАЯ ИГРА",
         manager=manager
     )
     continue_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect((550, 320), (100, 50)),
+        relative_rect=pygame.Rect(
+            (MAIN_MENU_BUTTON_X_MARGIN + MAIN_MENU_BUTTON_WIDTH + 30, MAIN_MENU_BUTTON_Y_MARGIN),
+            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+        ),
         text="ПРОДОЛЖИТЬ",
         manager=manager
     )
     exit_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect((680, 320), (100, 50)),
+        relative_rect=pygame.Rect(
+            (MAIN_MENU_BUTTON_X_MARGIN + 2 * MAIN_MENU_BUTTON_WIDTH + 60, MAIN_MENU_BUTTON_Y_MARGIN),
+            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+        ),
         text="ВЫЙТИ",
         manager=manager
     )
     settings_button = gui.elements.UIButton(
-        relative_rect=pygame.Rect((810, 320), (100, 50)),
+        relative_rect=pygame.Rect(
+            (MAIN_MENU_BUTTON_X_MARGIN + 3 * MAIN_MENU_BUTTON_WIDTH + 90, MAIN_MENU_BUTTON_Y_MARGIN),
+            (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
+        ),
         text="НАСТРОЙКИ",
         manager=manager
     )
@@ -178,16 +192,16 @@ def main_menu(screen, manager, font):
                     if event.ui_element == new_game_button:
                         pass
                     if event.ui_element == continue_button:
-                        return False
+                        return
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:
                         terminate()
+
             manager.process_events(event)
 
         manager.update(tick)
         manager.draw_ui(screen)
-        render_text("IMMERSED", 370, 200, 60, 1000, font, screen)
         pygame.display.flip()
         CLOCK.tick(FPS)
 

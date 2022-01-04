@@ -134,13 +134,12 @@ def game_loop():
     pygame.init()
     pygame.display.set_caption('Immersed')
 
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     running = True
+    is_main_menu = True
 
     barrier_group = pygame.sprite.Group()
-
-    manager = gui.UIManager((WIDTH, HEIGHT))
 
     game_map, pos = picture_to_matrix()
     player = Player(*pos)
@@ -149,9 +148,17 @@ def game_loop():
     bg.image = BACKGROUND_img
     bg.rect = bg.image.get_rect()
 
+    # ---- ресурсы для главного меню ----
+    manager = gui.UIManager((WIDTH, HEIGHT))
     big_font_picture = pygame.transform.scale(load_image('Fonts/font.png', color_key=(0, 0, 0)), (2586, 48))
     title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
                                       block_width=30, block_height=48, barrier=6)
+    background = load_image('all_image(shallow water).png')
+    # 231 - половина длины надписи "IMMERSED" в пикселях
+    render_text("IMMERSED", (WIDTH / 2) - 231, HEIGHT / 3.5, 60, 1000, title_font, background)
+    # ---- ресурсы для главного меню ----
+
+    main_menu(screen, manager, background)
 
     while running:
         for event in pygame.event.get():
@@ -178,10 +185,10 @@ def game_loop():
                 if event.key == pygame.K_d:
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
-                    is_main_menu = True
+                    main_menu(screen, manager, background)
 
-        if is_main_menu:
-            is_main_menu = main_menu(screen, manager, title_font)
+        # if is_main_menu:
+        #     is_main_menu = main_menu(screen, manager, background)
 
         moving(buttons_pressed, barrier_group, player)
 

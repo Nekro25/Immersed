@@ -59,9 +59,13 @@ BLOCK_SIZE = 50
 PLAYER_SIZE = 50
 
 CLOCK = pygame.time.Clock()
-# MANAGER = gui.UIManager((WIDTH, HEIGHT))
 
 GROUND_img = load_image('ground.png')
 PLAYER_img = load_image('Player.png')
 WATER_img = load_image('water.png')
 BACKGROUND_img = load_image('all_image(shallow water).png')
+
+MAIN_MENU_BUTTON_WIDTH = 100
+MAIN_MENU_BUTTON_HEIGHT = 50
+MAIN_MENU_BUTTON_X_MARGIN = (WIDTH / 2) - MAIN_MENU_BUTTON_WIDTH * 2 - 45
+MAIN_MENU_BUTTON_Y_MARGIN = HEIGHT / 2
