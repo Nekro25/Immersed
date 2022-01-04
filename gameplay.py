@@ -108,7 +108,7 @@ def draw_screen(screen, player, map, camera):
     barier_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
     bg = pygame.sprite.Sprite(screen_group)
-    bg.image = load_image('all_image(shallow water).png')
+    bg.image = BACKGROUND_img
 
     bg.rect = bg.image.get_rect()
     coef_y = 0
@@ -150,16 +150,12 @@ def moving(dict, group, player):
 def game_loop():
     pygame.init()
     pygame.display.set_caption('Immersed')
-    size = WIDTH, HEIGHT
 
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     running = True
-    is_main_menu = True
 
-    all_sprites = pygame.sprite.Group()
     barier_group = pygame.sprite.Group()
-    player_group = pygame.sprite.Group()
 
     manager = gui.UIManager((WIDTH, HEIGHT))
 
