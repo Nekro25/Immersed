@@ -139,12 +139,9 @@ def start_screen(screen, font):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen, manager):
+def main_menu(screen, manager, font):
     background = load_image('all_image(shallow water).png')
 
-    big_font_picture = pygame.transform.scale(load_image('Fonts/font.png', color_key=(0, 0, 0)), (2586, 48))
-    title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
-                                      block_width=30, block_height=48, barrier=6)
     screen.blit(background, (0, 0))
 
     # ---- кнопки в главном меню ----
@@ -185,12 +182,12 @@ def main_menu(screen, manager):
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:
-                        sys.exit()
+                        terminate()
             manager.process_events(event)
 
         manager.update(tick)
         manager.draw_ui(screen)
-        render_text("IMMERSED", 370, 200, 60, 1000, title_font, screen)
+        render_text("IMMERSED", 370, 200, 60, 1000, font, screen)
         pygame.display.flip()
         CLOCK.tick(FPS)
 

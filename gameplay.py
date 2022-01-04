@@ -153,7 +153,9 @@ def game_loop():
     player = Player(*pos)
     camera = Camera()
 
-    main_menu(screen, manager)
+    big_font_picture = pygame.transform.scale(load_image('Fonts/font.png', color_key=(0, 0, 0)), (2586, 48))
+    title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
+                                      block_width=30, block_height=48, barrier=6)
 
     while running:
         tick = CLOCK.tick(FPS)
@@ -171,7 +173,10 @@ def game_loop():
                 if pygame.key.get_pressed()[pygame.K_d]:
                     player.move_right(barier_group)
                 if pygame.key.get_pressed()[pygame.K_ESCAPE]:
-                    terminate()
+                    is_main_menu = True
+
+        if is_main_menu:
+            is_main_menu = main_menu(screen, manager, title_font)
 
         player.rect = player.image.get_rect().move(
             WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x,
