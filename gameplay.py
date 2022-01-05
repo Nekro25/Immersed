@@ -94,9 +94,9 @@ class Camera:
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera, bg):
-    barrier_group = pygame.sprite.Group()
-    screen_group = pygame.sprite.Group(bg, player)
+def draw_screen(screen, player, map, camera):
+    barrier = pygame.sprite.Group()
+    screen_group = pygame.sprite.Group(player)
     coef_y = 0
     for y in range(player.y - HEIGHT % BLOCK_SIZE // 2 - 1,
                    player.y + HEIGHT % BLOCK_SIZE // 2 + 4):
@@ -104,7 +104,7 @@ def draw_screen(screen, player, map, camera, bg):
         for x in range(player.x - WIDTH % BLOCK_SIZE // 2,
                        player.x + HEIGHT % BLOCK_SIZE // 2 + 10):
             if map[x][y] == GROUND:
-                barrier_group.add(Block(coef_x, coef_y, GROUND_img, screen_group))
+                barrier.add(Block(coef_x, coef_y, GROUND_img, screen_group))
             elif map[x][y] == PLAYER:
                 Block(coef_x, coef_y, WATER_img, screen_group)
             elif map[x][y] == WATER:
@@ -113,20 +113,20 @@ def draw_screen(screen, player, map, camera, bg):
         coef_y += 1
     camera.track(player)
     for obj in screen_group:
-        if obj != bg:
-            camera.update(obj)
+        camera.update(obj)
     screen_group.draw(screen)
-    return barrier_group
+    return barrier
 
 
-def moving(dict, group, player):
-    if dict[pygame.K_a]:
+def moving(group, player):
+    global buttons_pressed
+    if buttons_pressed[pygame.K_a]:
         player.move_left(group)
-    if dict[pygame.K_s]:
+    if buttons_pressed[pygame.K_s]:
         player.move_down(group)
-    if dict[pygame.K_d]:
+    if buttons_pressed[pygame.K_d]:
         player.move_right(group)
-    if dict[pygame.K_w]:
+    if buttons_pressed[pygame.K_w]:
         player.move_up(group)
 
 
@@ -137,16 +137,10 @@ def game_loop():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
     running = True
-    is_main_menu = True
-
-    barrier_group = pygame.sprite.Group()
 
     game_map, pos = picture_to_matrix()
     player = Player(*pos)
     camera = Camera()
-    bg = pygame.sprite.Sprite()
-    bg.image = BACKGROUND_img
-    bg.rect = bg.image.get_rect()
 
     # ---- ресурсы для главного меню ----
     big_font_picture = pygame.transform.scale(
@@ -168,6 +162,13 @@ def game_loop():
     main_menu(screen, background)
 
     while running:
+
+        player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
+        player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
+        screen.blit(BACKGROUND_img, (0, 0))
+
+        barrier_group = draw_screen(screen, player, game_map, camera)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
@@ -194,12 +195,10 @@ def game_loop():
                 if event.key == pygame.K_ESCAPE:
                     main_menu(screen, background)
 
-        moving(buttons_pressed, barrier_group, player)
-
-        player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
-        player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
-        barrier_group = draw_screen(screen, player, game_map, camera, bg)
+        moving(barrier_group, player)
 
         CLOCK.tick(FPS)
         pygame.display.flip()
+        del screen
+        screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.quit()
