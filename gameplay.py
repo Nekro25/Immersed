@@ -4,6 +4,7 @@ import sys
 from CONSTANTS import *
 from picture2matrix import picture_to_matrix
 from wallpapers import *
+from interface import *
 
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
                    pygame.K_d: False}
@@ -94,7 +95,7 @@ class Camera:
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera):
+def draw_screen(screen, player, map, camera, lifebar):
     barrier = pygame.sprite.Group()
     screen_group = pygame.sprite.Group(player)
     coef_y = 0
@@ -114,7 +115,10 @@ def draw_screen(screen, player, map, camera):
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
+    screen_group.add(lifebar)
     screen_group.draw(screen)
+    for i in screen_group:
+        i.kill()
     return barrier
 
 
@@ -141,6 +145,7 @@ def game_loop():
     game_map, pos = picture_to_matrix()
     player = Player(*pos)
     camera = Camera()
+    lifebar = LifeBar()
 
     # ---- ресурсы для главного меню ----
     big_font_picture = pygame.transform.scale(
@@ -155,7 +160,8 @@ def game_loop():
     background = load_image('all_image(shallow water).png')
 
     # 231 - половина длины надписи "IMMERSED" в пикселях
-    render_text("IMMERSED", (WIDTH / 2) - 231, HEIGHT / 3.5, 60, 1000, title_font, background)
+    render_text("IMMERSED", (WIDTH / 2) - 231, HEIGHT / 3.5, 60, 1000, title_font,
+                background)
 
     # ---- ресурсы для главного меню ----
 
@@ -167,7 +173,7 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(BACKGROUND_img, (0, 0))
 
-        barrier_group = draw_screen(screen, player, game_map, camera)
+        barrier_group = draw_screen(screen, player, game_map, camera, lifebar)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -194,6 +200,9 @@ def game_loop():
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
                     main_menu(screen, background)
+
+            if event.type == lifebar.oxygen_event:
+                lifebar.oxygen_lvl -= 1
 
         moving(barrier_group, player)
 

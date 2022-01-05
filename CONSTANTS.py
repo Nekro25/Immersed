@@ -57,6 +57,7 @@ FPS = 60
 
 BLOCK_SIZE = 50
 PLAYER_SIZE = 50
+SECOND = 1000
 
 CLOCK = pygame.time.Clock()
 
@@ -64,6 +65,7 @@ GROUND_img = load_image('ground.png')
 PLAYER_img = load_image('Player.png')
 WATER_img = load_image('water.png')
 BACKGROUND_img = load_image('all_image(shallow water).png')
+LIFEBAR_img = load_image('lifebar.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815

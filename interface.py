@@ -1,0 +1,16 @@
+import pygame
+from CONSTANTS import LIFEBAR_img, HEIGHT, SECOND
+
+
+class LifeBar(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = LIFEBAR_img
+        self.rect = self.image.get_rect().move(50, HEIGHT - 250)
+        self.oxygen_lvl = 100
+        self.oxygen_event = pygame.USEREVENT + 1
+        pygame.time.set_timer(self.oxygen_event, SECOND)
+        self.health_lvl = 100
+
+    def draw_lvl(self):
+        pass
