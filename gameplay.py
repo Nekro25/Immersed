@@ -115,11 +115,11 @@ def draw_screen(screen, player, map, camera, lifebar):
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
+    # oxygen = lifebar.draw_lvl()
+    # screen_group.add(oxygen)
     screen_group.add(lifebar)
     screen_group.draw(screen)
-    for i in screen_group:
-        i.kill()
-    return barrier
+    return barrier, screen_group
 
 
 def moving(group, player):
@@ -173,7 +173,7 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(BACKGROUND_img, (0, 0))
 
-        barrier_group = draw_screen(screen, player, game_map, camera, lifebar)
+        barrier_group, screen_group = draw_screen(screen, player, game_map, camera, lifebar)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -205,7 +205,8 @@ def game_loop():
                 lifebar.oxygen_lvl -= 1
 
         moving(barrier_group, player)
-
+        for i in screen_group:
+            i.kill()
         CLOCK.tick(FPS)
         pygame.display.flip()
         del screen
