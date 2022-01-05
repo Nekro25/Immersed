@@ -115,7 +115,8 @@ def draw_screen(screen, player, map, camera, lifebar):
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
-    screen_group.add(lifebar.draw_lvl())
+    screen_group.add(lifebar.draw_ox_lvl())
+    screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
     screen_group.draw(screen)
     return barrier, screen_group
