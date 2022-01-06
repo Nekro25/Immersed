@@ -18,12 +18,12 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
     barrier = pygame.sprite.Group()
     oxygen_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
-    coef_y = 0
-    for y in range(player.y - HEIGHT // BLOCK_SIZE // 2,
-                   player.y + HEIGHT // BLOCK_SIZE // 2):
-        coef_x = 0
-        for x in range(player.x - WIDTH // BLOCK_SIZE // 2,
-                       player.x + HEIGHT // BLOCK_SIZE // 2):
+    coef_y = -10
+    for y in range(player.y - HEIGHT // BLOCK_SIZE // 2 - 10,
+                   player.y + HEIGHT // BLOCK_SIZE // 2 + 10):
+        coef_x = -10
+        for x in range(player.x - WIDTH // BLOCK_SIZE // 2 - 10,
+                       player.x + WIDTH // BLOCK_SIZE // 2 + 10):
             if 0 <= y <= 249 and 0 <= x <= 499:
                 if map[x][y] == GROUND:
                     barrier.add(Structure(coef_x, coef_y, GROUND_img, screen_group))
@@ -64,11 +64,11 @@ def moving(group, player):
 
 def check_background(player, map):
     if map[player.x][player.y] == ICE_bg:
-        bg = ICE_CAVE_BG_img
+        return ICE_CAVE_BG_img
     elif map[player.x][player.y] == WATER:
-        bg = BACKGROUND_img
+        return BACKGROUND_img
     elif map[player.x][player.y] == GROUND_bg:
-        bg = GROUND_CAVE_BG_img
+        return GROUND_CAVE_BG_img
 
 
 # Игровой цикл
@@ -155,7 +155,7 @@ def game_loop():
             lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
 
-        check_background(player, game_map)
+        bg = check_background(player, game_map)
 
         for i in screen_group:  # оптимизация
             i.kill()
