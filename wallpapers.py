@@ -6,6 +6,7 @@ import sys
 import os
 
 from CONSTANTS import *
+from data_base import *
 
 # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
 # это количество пикселей, которое занимает нарисованный вариант символа в ширину.
@@ -192,9 +193,9 @@ def main_menu(screen, background):
             if event.type == pygame.USEREVENT:
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     if event.ui_element == new_game_button:
-                        pass
+                        return new_game()
                     if event.ui_element == continue_button:
-                        return
+                        return get_save()
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:

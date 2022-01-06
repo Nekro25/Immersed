@@ -2,6 +2,7 @@ import pygame
 import pygame_gui as gui
 import os
 import sys
+import sqlite3
 
 
 class FileError(Exception):
@@ -79,3 +80,6 @@ MAIN_MENU_BUTTON_HEIGHT = 50
 MAIN_MENU_BUTTON_X_MARGIN = (WIDTH / 2) - MAIN_MENU_BUTTON_WIDTH * 2 - 45
 MAIN_MENU_BUTTON_Y_MARGIN = HEIGHT / 2
 MAIN_MENU_BUTTON_SPACING = 30
+
+CON = sqlite3.connect('game_data.db')
+CURSOR = CON.cursor()
