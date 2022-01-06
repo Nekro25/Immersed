@@ -40,7 +40,8 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
                               oxygen_group)
                     # здесь -3 тк это объект блольше чем обычный блок
                 elif map[x][y] == REACTOR:
-                    Structure(coef_x - 3, coef_y - 5, REACTOR_img, screen_group, oxygen_group)
+                    Structure(coef_x - 3, coef_y - 5, REACTOR_img, screen_group,
+                              oxygen_group)
             coef_x += 1
         coef_y += 1
     screen_group.add(player)
