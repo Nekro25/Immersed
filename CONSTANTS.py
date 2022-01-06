@@ -66,6 +66,7 @@ PLAYER_img = load_image('Player.png')
 WATER_img = load_image('water.png')
 BACKGROUND_img = load_image('all_image(shallow water).png')
 LIFEBAR_img = load_image('lifebar.png')
+EMPTY_DISPLAY_img = load_image('empty_display.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815
@@ -79,3 +80,23 @@ MAIN_MENU_BUTTON_HEIGHT = 50
 MAIN_MENU_BUTTON_X_MARGIN = (WIDTH / 2) - MAIN_MENU_BUTTON_WIDTH * 2 - 45
 MAIN_MENU_BUTTON_Y_MARGIN = HEIGHT / 2
 MAIN_MENU_BUTTON_SPACING = 30
+
+DISPLAY_FRAMES = [load_image('Display_images/darkened_display_1.png'), load_image('Display_images/darkened_display_2.png'),
+                  load_image('Display_images/darkened_display_3.png'), load_image('Display_images/darkened_display_4.png'),
+                  load_image('Display_images/darkened_display_5.png'), load_image('Display_images/darkened_display_6.png'),
+                  load_image('Display_images/darkened_display_7.png'), load_image('Display_images/darkened_display_8.png'),
+                  load_image('Display_images/darkened_display_9.png'), load_image('Display_images/darkened_display_10.png'),
+                  load_image('Display_images/darkened_display_11.png'),
+                  load_image('Display_images/darkened_display_12.png'),
+                  load_image('Display_images/darkened_display_13.png'),
+                  load_image('Display_images/darkened_display_14.png'),
+                  load_image('Display_images/darkened_display_15.png'),
+                  load_image('Display_images/darkened_display_16.png'),
+                  load_image('Display_images/darkened_display_17.png'),
+                  load_image('Display_images/darkened_display_18.png'),
+                  load_image('Display_images/darkened_display_19.png'),
+                  load_image('Display_images/darkened_display_20.png'),
+                  load_image('Display_images/darkened_display_21.png'),
+                  load_image('Display_images/darkened_display_22.png'),
+                  load_image('Display_images/darkened_display_23.png'),
+                  ]
