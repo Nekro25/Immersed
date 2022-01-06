@@ -16,7 +16,8 @@ buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
 def draw_screen(screen, player, map, camera, lifebar, bg):
     barrier = pygame.sprite.Group()
-    screen_group = pygame.sprite.Group(player)
+    oxygen_group = pygame.sprite.Group()
+    screen_group = pygame.sprite.Group()
     coef_y = 0
     for y in range(player.y - HEIGHT % BLOCK_SIZE // 2 - 1,
                    player.y + HEIGHT % BLOCK_SIZE // 2 + 4):
@@ -25,19 +26,24 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
                        player.x + HEIGHT % BLOCK_SIZE // 2 + 10):
             if 0 <= y <= 249 and 0 <= x <= 499:
                 if map[x][y] == GROUND:
-                    barrier.add(Block(coef_x, coef_y, GROUND_img, screen_group))
+                    barrier.add(Structure(coef_x, coef_y, GROUND_img, screen_group))
                 elif map[x][y] == ICE:
-                    barrier.add(Block(coef_x, coef_y, ICE_img, screen_group))
+                    barrier.add(Structure(coef_x, coef_y, ICE_img, screen_group))
                 elif map[x][y] == ICE_bg:
                     bg = ICE_CAVE_BG_img
-                elif map[x][y] == PLAYER:
-                    Block(coef_x, coef_y, WATER_img, screen_group)
                 elif map[x][y] == WATER:
                     bg = BACKGROUND_img
                 elif map[x][y] == GROUND_bg:
                     bg = GROUND_CAVE_BG_img
+                elif map[x][y] == OXYGEN_FILLER:
+                    Structure(coef_x - 3, coef_y - 3, OXYGEN_FILLER_img, screen_group,
+                              oxygen_group)
+                    # здесь -3 тк это объект блольше чем обычный блок
+                elif map[x][y] == REACTOR:
+                    Structure(coef_x - 3, coef_y - 5, REACTOR_img, screen_group, oxygen_group)
             coef_x += 1
         coef_y += 1
+    screen_group.add(player)
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
@@ -45,7 +51,7 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
     screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
     screen_group.draw(screen)
-    return barrier, screen_group, bg
+    return barrier, screen_group, bg, oxygen_group
 
 
 # функция проверяет нажатие клавишь и передвигает персонажа
@@ -104,8 +110,9 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group, bg = draw_screen(screen, player, game_map, camera,
-                                                      lifebar, bg)
+        barrier_group, screen_group, bg, oxygen_group = draw_screen(screen, player,
+                                                                    game_map, camera,
+                                                                    lifebar, bg)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -140,7 +147,8 @@ def game_loop():
 
             if event.type == lifebar.oxygen_event:
                 lifebar.oxygen_lvl -= 1
-
+        if pygame.sprite.spritecollideany(player, oxygen_group):
+            lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
         for i in screen_group:  # оптимизация
             i.kill()

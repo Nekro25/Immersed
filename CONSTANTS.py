@@ -34,6 +34,8 @@ ICE = 2
 PLAYER = 7
 ICE_bg = 3
 GROUND_bg = 4
+OXYGEN_FILLER = 5
+REACTOR = 6
 
 GRAY = (150, 150, 150, 255)
 BLUE = (0, 0, 255, 255)
@@ -41,6 +43,8 @@ BLACK_BLUE = (0, 0, 100, 255)
 BROWN = (70, 40, 0, 255)
 BLACK_BROWN = (35, 20, 0, 255)
 YELLOW = (255, 255, 0, 255)
+BLACK_RED = (125, 0, 0, 255)
+DIRTY_GREEN = (70, 70, 0, 255)
 
 BLOCKS = {
     GRAY: WATER,
@@ -48,7 +52,9 @@ BLOCKS = {
     YELLOW: PLAYER,
     BLUE: ICE,
     BLACK_BLUE: ICE_bg,
-    BLACK_BROWN: GROUND_bg
+    BLACK_BROWN: GROUND_bg,
+    BLACK_RED: REACTOR,
+    DIRTY_GREEN: OXYGEN_FILLER
 }
 
 MAP_NAME = 'map.png'
@@ -70,6 +76,8 @@ LIFEBAR_img = load_image('lifebar.png')
 ICE_img = load_image('ice.png')
 ICE_CAVE_BG_img = load_image('ice_cave_background.png')
 GROUND_CAVE_BG_img = load_image('cave_background.png')
+OXYGEN_FILLER_img = load_image('oxygen_filler.png')
+REACTOR_img = load_image('reactor.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815

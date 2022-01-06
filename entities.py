@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
         self.cell_x = int(self.map_x) % BLOCK_SIZE
 
 
-class Block(pygame.sprite.Sprite):
+class Structure(pygame.sprite.Sprite):
     def __init__(self, x, y, img, *args):
         super().__init__(*args)
         self.x = x
