@@ -4,6 +4,7 @@ import copy
 
 import sys
 import os
+import shutil
 
 from CONSTANTS import *
 
@@ -49,7 +50,9 @@ continue_button = gui.elements.UIButton(
 )
 exit_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (
+            MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
+            MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ",
@@ -57,12 +60,16 @@ exit_button = gui.elements.UIButton(
 )
 settings_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (
+            MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
+            MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НАСТРОЙКИ",
     manager=manager
 )
+
+
 # ---- кнопки в главном меню ----
 
 
@@ -93,7 +100,8 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     num = 0
 
     for char in all_symbols.keys():
-        image.set_clip(pygame.Rect(((block_width + barrier) * num), 0, block_width, block_height))
+        image.set_clip(
+            pygame.Rect(((block_width + barrier) * num), 0, all_symbols[char][0] * (block_width / 5), block_height))
         symbol_image = image.subsurface(image.get_clip())
 
         all_symbols[char].append(symbol_image)
@@ -104,26 +112,41 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     return all_symbols
 
 
-def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, space_length=3):
+def next_word(text):
+    for sym in ['.', ',', '!', '?', ' ']:
+        word = text[:text.find(sym)]
+        if ' ' not in word:
+            return word
+
+
+def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, space_length=3,
+                waiting_time=0, step_by_step=False):
     """
     Функция рендерит заданный текст с кастомным шрифтом.
 
-    :param text:        текст для вывода;
-    :param margin_x:    величина горизонтального отступа от левой границы холста;
-    :param margin_y:    величина вертикального отступа от верхней границы холста;
-    :param spacing:     расстояние между символами;
-    :param max_width:   максимальная длина строки(в пикселях);
-    :param font:        шрифт;
-    :param screen:      холст;
-    :param space_length длина пробела(в пикселях);
+    :param text:         текст для вывода;
+    :param margin_x:     величина горизонтального отступа от левой границы холста;
+    :param margin_y:     величина вертикального отступа от верхней границы холста;
+    :param spacing:      расстояние между символами;
+    :param max_width:    максимальная длина строки(в пикселях);
+    :param font:         шрифт;
+    :param screen:       холст;
+    :param space_length: длина пробела(в пикселях);
+    :param waiting_time: продолжительность ожидания после выведения каждой буквы(в миллисекундах);
+    :param step_by_step: выводит текст букву за буквой, если установлено значение True;
     :return:
     """
 
     text += ' '
     origin_x = margin_x
     word = ''
+    next_word_length = 0
 
-    for char in text:
+    for idx, char in enumerate(text):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                return
+
         if char not in [' ', '\n']:
             try:
                 image = font[str(char)][1]
@@ -132,50 +155,99 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, spac
                 pass
         else:
             # длина слова(в пикселях) вместе с символами пустой строки и пропусками
-            word_length = sum(map(lambda s: font[s][0] + spacing, word))
+            next_word_length = sum(map(lambda s: font[s][0] + spacing, next_word(text[idx + 1:])))
 
-            if char == ' ' and char is not text[-1]:
-                margin_x += space_length + spacing
+            if word != '':
+                last_sym = word[-1]
 
             # отображаем символы по одному в положенном месте на экране
             for sym in word:
                 image = font[sym][1]
                 screen.blit(image, (margin_x, margin_y))
+                if step_by_step:
+                    pygame.display.flip()
+                    pygame.time.wait(waiting_time)
                 margin_x += font[sym][0] + spacing
 
+            if char == ' ':
+                margin_x += space_length + spacing
+
             word = ''
-            if char == '\n' or word_length + margin_x - origin_x > max_width:
+            a = margin_x - origin_x > max_width
+            if char == '\n' and last_sym not in ['.', ','] or margin_x - origin_x > max_width:
                 margin_x = origin_x
                 margin_y += font['Height']
 
-        if margin_x - origin_x > max_width:
+        if margin_x - origin_x + next_word_length > max_width:
             margin_x = origin_x
             margin_y += font['Height']
 
 
 # ---- Функция показывает заставку, когда игрок начал новую игру ----
-# P.S. ФУНКЦИЯ НЕ ГОТОВА
-def start_screen(screen, font):
-    intro_text = """Вы астронавт-любитель, пытающийся найти драгоценности в открытом космосе. 
-    Но в один момент вы сталкиваетесь с целой бандой пиратов, и, стараясь оторваться от них, 
-    улетаете в неразведанные места. При попытке сделать трюк вокруг системы планет что-то 
-    пошло не по плану: вы слишком близко подлетели к одной из них и не смогли справиться с силой притяжения. 
-    После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить 
-    его и продолжить свой путь."""
+def start_screen(screen):
+    list_of_darkened_frames = DISPLAY_FRAMES
+    intro_text = "Вы астронавт-любитель, пытающийся найти драгоценности в открытом космосе. " \
+                 "Но в один момент вы сталкиваетесь с целой бандой пиратов, и, стараясь оторваться от них, " \
+                 "улетаете в неразведанные места. При попытке сделать трюк вокруг системы планет что-то " \
+                 "пошло не по плану: вы слишком близко подлетели к одной из них и не смогли справиться с силой притяжения. " \
+                 "После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить " \
+                 "его и продолжить свой путь."
 
     command_text = "Нажмите любую клавишу на клавиатуре, чтобы продолжить."
 
-    render_text(intro_text, 10, 20, 1, 500, font, screen)
-    render_text(command_text, 100, 300, 1, 500, font, screen)
+    idx = 0
+    show_preview = True
+
+    screen.fill((0, 0, 0))
+    pygame.display.flip()
+    pygame.time.wait(4000)
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.KEYDOWN:
                 return
 
+        if show_preview:
+            medium_font_image = pygame.transform.scale(
+                load_image(FONT_PATH, color_key=(0, 0, 0)),
+                (FONT_IMG_WIDTH * 3, FONT_IMG_HEIGHT * 3)
+            )
+            medium_font = generate_custom_font(medium_font_image, font, (255, 254, 255),
+                                               block_width=FONT_BLOCK_WIDTH * 3,
+                                               block_height=FONT_BLOCK_HEIGHT * 3,
+                                               barrier=FONT_BARRIER * 3)
+            small_font_image = pygame.transform.scale(
+                load_image(FONT_PATH, color_key=(0, 0, 0)),
+                (FONT_IMG_WIDTH * 2, FONT_IMG_HEIGHT * 2)
+            )
+            small_font = generate_custom_font(small_font_image, font, (255, 254, 255),
+                                              block_width=FONT_BLOCK_WIDTH * 2,
+                                              block_height=FONT_BLOCK_HEIGHT * 2,
+                                              barrier=FONT_BARRIER * 2)
+
+            render_text(command_text, WIDTH / 2 - 300, 670, 8, 800, small_font, screen, space_length=3)
+            pygame.display.flip()
+            if idx <= 88:
+                screen.blit(list_of_darkened_frames[idx % 23], (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+                idx += 1
+            else:
+                pygame.time.wait(1000)
+                screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+                pygame.display.flip()
+                pygame.time.wait(2000)
+
+                render_text(intro_text, 390, 200, 12, 600, medium_font, screen,
+                            space_length=5, waiting_time=80, step_by_step=True)
+                show_preview = False
+
+            if idx % 23 == 0:
+                list_of_darkened_frames = list_of_darkened_frames[::-1]
+        else:
+            return
+
+        pygame.time.wait(150)
         pygame.display.flip()
         CLOCK.tick(FPS)
 
@@ -192,7 +264,8 @@ def main_menu(screen, background):
             if event.type == pygame.USEREVENT:
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     if event.ui_element == new_game_button:
-                        pass
+                        start_screen(screen)
+                        return
                     if event.ui_element == continue_button:
                         return
                     if event.ui_element == settings_button:
@@ -206,5 +279,3 @@ def main_menu(screen, background):
         manager.draw_ui(screen)
         pygame.display.flip()
         CLOCK.tick(FPS)
-
-# custom_font = generate_custom_font(load_image('Fonts/font_eng.png'), font, (255, 254, 255))
