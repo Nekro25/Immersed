@@ -178,7 +178,7 @@ def game_loop():
 
         player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
-        screen.blit(BACKGROUND_img, (0, 0))
+        screen.blit(BACKGROUND_img, (-player.x, -player.y))
 
         barrier_group, screen_group = draw_screen(screen, player, game_map, camera, lifebar)
 
