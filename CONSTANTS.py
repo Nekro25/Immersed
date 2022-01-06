@@ -67,6 +67,9 @@ PLAYER_img = load_image('Player.png')
 WATER_img = load_image('water.png')
 BACKGROUND_img = load_image('all_image(shallow water).png')
 LIFEBAR_img = load_image('lifebar.png')
+ICE_img = load_image('ice.png')
+ICE_CAVE_BG_img = load_image('ice_cave_background.png')
+GROUND_CAVE_BG_img = load_image('cave_background.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815

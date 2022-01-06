@@ -14,7 +14,7 @@ buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera, lifebar):
+def draw_screen(screen, player, map, camera, lifebar, bg):
     barrier = pygame.sprite.Group()
     screen_group = pygame.sprite.Group(player)
     coef_y = 0
@@ -26,10 +26,16 @@ def draw_screen(screen, player, map, camera, lifebar):
             if 0 <= y <= 249 and 0 <= x <= 499:
                 if map[x][y] == GROUND:
                     barrier.add(Block(coef_x, coef_y, GROUND_img, screen_group))
+                elif map[x][y] == ICE:
+                    barrier.add(Block(coef_x, coef_y, ICE_img, screen_group))
+                elif map[x][y] == ICE_bg:
+                    bg = ICE_CAVE_BG_img
                 elif map[x][y] == PLAYER:
                     Block(coef_x, coef_y, WATER_img, screen_group)
                 elif map[x][y] == WATER:
-                    Block(coef_x, coef_y, WATER_img, screen_group)
+                    bg = BACKGROUND_img
+                elif map[x][y] == GROUND_bg:
+                    bg = GROUND_CAVE_BG_img
             coef_x += 1
         coef_y += 1
     camera.track(player)
@@ -39,7 +45,7 @@ def draw_screen(screen, player, map, camera, lifebar):
     screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
     screen_group.draw(screen)
-    return barrier, screen_group
+    return barrier, screen_group, bg
 
 
 # функция проверяет нажатие клавишь и передвигает персонажа
@@ -62,11 +68,6 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    running = True
-
-    game_map = picture_to_matrix()
-    camera = Camera()
-
     # ---- ресурсы для главного меню ----
     big_font_picture = pygame.transform.scale(
         load_image(FONT_PATH, color_key=(0, 0, 0)),
@@ -88,16 +89,23 @@ def game_loop():
     # [корабль1, корабль2, корабль3, неизвестный реактор]
     pos, ox, hp, progress = main_menu(screen, background)
 
+    running = True
+
+    game_map = picture_to_matrix()
+    camera = Camera()
     player = Player(*pos)
     lifebar = LifeBar(ox, hp)
+
+    bg = BACKGROUND_img
 
     while running:
 
         player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
-        screen.blit(BACKGROUND_img, (-player.x, -player.y))
+        screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group = draw_screen(screen, player, game_map, camera, lifebar)
+        barrier_group, screen_group, bg = draw_screen(screen, player, game_map, camera,
+                                                      lifebar, bg)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
