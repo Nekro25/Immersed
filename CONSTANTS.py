@@ -96,11 +96,16 @@ MAIN_MENU_BUTTON_SPACING = 30
 CON = sqlite3.connect('game_data.db')
 CURSOR = CON.cursor()
 
-DISPLAY_FRAMES = [load_image('Display_images/darkened_display_1.png'), load_image('Display_images/darkened_display_2.png'),
-                  load_image('Display_images/darkened_display_3.png'), load_image('Display_images/darkened_display_4.png'),
-                  load_image('Display_images/darkened_display_5.png'), load_image('Display_images/darkened_display_6.png'),
-                  load_image('Display_images/darkened_display_7.png'), load_image('Display_images/darkened_display_8.png'),
-                  load_image('Display_images/darkened_display_9.png'), load_image('Display_images/darkened_display_10.png'),
+DISPLAY_FRAMES = [load_image('Display_images/darkened_display_1.png'),
+                  load_image('Display_images/darkened_display_2.png'),
+                  load_image('Display_images/darkened_display_3.png'),
+                  load_image('Display_images/darkened_display_4.png'),
+                  load_image('Display_images/darkened_display_5.png'),
+                  load_image('Display_images/darkened_display_6.png'),
+                  load_image('Display_images/darkened_display_7.png'),
+                  load_image('Display_images/darkened_display_8.png'),
+                  load_image('Display_images/darkened_display_9.png'),
+                  load_image('Display_images/darkened_display_10.png'),
                   load_image('Display_images/darkened_display_11.png'),
                   load_image('Display_images/darkened_display_12.png'),
                   load_image('Display_images/darkened_display_13.png'),
