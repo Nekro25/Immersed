@@ -5,113 +5,46 @@ from CONSTANTS import *
 from picture2matrix import picture_to_matrix
 from wallpapers import *
 from interface import *
+from data_base import *
+from entities import *
 
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
                    pygame.K_d: False}
 
 
-class Block(pygame.sprite.Sprite):
-    def __init__(self, x, y, img, *args):
-        super().__init__(*args)
-        self.x = x
-        self.y = y
-        self.image = img
-        self.rect = self.image.get_rect().move(50 * self.x, 50 * self.y)
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self, y, x, *args):
-        super().__init__(*args)
-        self.image = PLAYER_img
-        self.rect = self.image.get_rect()
-        self.rect.x = 0
-        self.rect.y = 0
-        self.x = x
-        self.y = y
-        self.speed = 300
-        self.cell_x = 0
-        self.cell_y = 0
-        self.map_x = x * BLOCK_SIZE
-        self.map_y = y * BLOCK_SIZE
-
-    def move_up(self, group):
-        self.map_y -= self.speed / FPS
-        self.rect.y -= self.speed // 30
-        if pygame.sprite.spritecollideany(self, group):
-            self.rect.y += self.speed // 30
-            self.map_y += self.speed / FPS
-            return
-        self.rect.y += self.speed // 30
-        self.y = int(self.map_y) // BLOCK_SIZE
-        self.cell_y = int(self.map_y) % BLOCK_SIZE
-
-    def move_down(self, group):
-        self.map_y += self.speed / FPS
-        self.rect.y += self.speed // 30
-        if pygame.sprite.spritecollideany(self, group):
-            self.rect.y -= self.speed // 30
-            self.map_y -= self.speed / FPS
-            return
-        self.rect.y -= self.speed // 30
-        self.y = int(self.map_y) // BLOCK_SIZE
-        self.cell_y = int(self.map_y) % BLOCK_SIZE
-
-    def move_left(self, group):
-        self.map_x -= self.speed / FPS
-        self.rect.x -= self.speed // 30
-        if pygame.sprite.spritecollideany(self, group):
-            self.rect.x += self.speed // 30
-            self.map_x += self.speed / FPS
-            return
-        self.rect.x += self.speed // 30
-        self.x = int(self.map_x) // BLOCK_SIZE
-        self.cell_x = int(self.map_x) % BLOCK_SIZE
-
-    def move_right(self, group):
-        self.map_x += self.speed / FPS
-        self.rect.x += self.speed // 30
-        if pygame.sprite.spritecollideany(self, group):
-            self.rect.x -= self.speed // 30
-            self.map_x -= self.speed / FPS
-            return
-        self.rect.x -= self.speed // 30
-        self.x = int(self.map_x) // BLOCK_SIZE
-        self.cell_x = int(self.map_x) % BLOCK_SIZE
-
-
-class Camera:
-    def __init__(self):
-        self.x_coef = 0  # коэффициент для выравнивания по камере
-        self.y_coef = 0
-
-    def update(self, object):
-        object.rect.x -= self.x_coef
-        object.rect.y -= self.y_coef
-
-    def track(self, object):
-        self.x_coef = object.cell_x
-        self.y_coef = object.cell_y
-
-
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera, lifebar):
+def draw_screen(screen, player, map, camera, lifebar, bg):
     barrier = pygame.sprite.Group()
-    screen_group = pygame.sprite.Group(player)
+    oxygen_group = pygame.sprite.Group()
+    screen_group = pygame.sprite.Group()
     coef_y = 0
     for y in range(player.y - HEIGHT % BLOCK_SIZE // 2 - 1,
                    player.y + HEIGHT % BLOCK_SIZE // 2 + 4):
         coef_x = -3
         for x in range(player.x - WIDTH % BLOCK_SIZE // 2,
                        player.x + HEIGHT % BLOCK_SIZE // 2 + 10):
-            if map[x][y] == GROUND:
-                barrier.add(Block(coef_x, coef_y, GROUND_img, screen_group))
-            elif map[x][y] == PLAYER:
-                Block(coef_x, coef_y, WATER_img, screen_group)
-            elif map[x][y] == WATER:
-                Block(coef_x, coef_y, WATER_img, screen_group)
+            if 0 <= y <= 249 and 0 <= x <= 499:
+                if map[x][y] == GROUND:
+                    barrier.add(Structure(coef_x, coef_y, GROUND_img, screen_group))
+                elif map[x][y] == ICE:
+                    barrier.add(Structure(coef_x, coef_y, ICE_img, screen_group))
+                elif map[x][y] == ICE_bg:
+                    bg = ICE_CAVE_BG_img
+                elif map[x][y] == WATER:
+                    bg = BACKGROUND_img
+                elif map[x][y] == GROUND_bg:
+                    bg = GROUND_CAVE_BG_img
+                elif map[x][y] == OXYGEN_FILLER:
+                    Structure(coef_x - 3, coef_y - 3, OXYGEN_FILLER_img, screen_group,
+                              oxygen_group)
+                    # здесь -3 тк это объект блольше чем обычный блок
+                elif map[x][y] == REACTOR:
+                    Structure(coef_x - 3, coef_y - 5, REACTOR_img, screen_group,
+                              oxygen_group)
             coef_x += 1
         coef_y += 1
+    screen_group.add(player)
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
@@ -119,9 +52,10 @@ def draw_screen(screen, player, map, camera, lifebar):
     screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
     screen_group.draw(screen)
-    return barrier, screen_group
+    return barrier, screen_group, bg, oxygen_group
 
 
+# функция проверяет нажатие клавишь и передвигает персонажа
 def moving(group, player):
     global buttons_pressed
     if buttons_pressed[pygame.K_a]:
@@ -134,18 +68,12 @@ def moving(group, player):
         player.move_up(group)
 
 
+# Игровой цикл
 def game_loop():
     pygame.init()
     pygame.display.set_caption('Immersed')
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-    running = True
-
-    game_map, pos = picture_to_matrix()
-    player = Player(*pos)
-    camera = Camera()
-    lifebar = LifeBar()
 
     # ---- ресурсы для главного меню ----
     big_font_picture = pygame.transform.scale(
@@ -164,21 +92,33 @@ def game_loop():
                 background)
 
     # ---- ресурсы для главного меню ----
+    # позиция игрока, количество кислорода, количество здоровья,
+    # [корабль1, корабль2, корабль3, неизвестный реактор]
+    pos, ox, hp, progress = main_menu(screen, background)
 
-    main_menu(screen, background)
+    running = True
+
+    game_map = picture_to_matrix()
+    camera = Camera()
+    player = Player(*pos)
+    lifebar = LifeBar(ox, hp)
+
+    bg = BACKGROUND_img
 
     while running:
 
         player.rect.x = WIDTH // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_x
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
-        screen.blit(BACKGROUND_img, (0, 0))
+        screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group = draw_screen(screen, player, game_map, camera, lifebar)
+        barrier_group, screen_group, bg, oxygen_group = draw_screen(screen, player,
+                                                                    game_map, camera,
+                                                                    lifebar, bg)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-
+            # благодаря разделению игрок движется плавно а не рывками
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     buttons_pressed[pygame.K_w] = True
@@ -199,16 +139,20 @@ def game_loop():
                 if event.key == pygame.K_d:
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
-                    main_menu(screen, background)
+                    new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
+                             progress)
+                    pos, ox, hp, progress = main_menu(screen, background)
+                    player = Player(*pos)
+                    lifebar.oxygen_lvl = ox
+                    lifebar.health_lvl = hp
 
             if event.type == lifebar.oxygen_event:
                 lifebar.oxygen_lvl -= 1
-
+        if pygame.sprite.spritecollideany(player, oxygen_group):
+            lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
-        for i in screen_group:
+        for i in screen_group:  # оптимизация
             i.kill()
         CLOCK.tick(FPS)
         pygame.display.flip()
-        del screen
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.quit()

@@ -15,8 +15,6 @@ def picture_to_matrix():
         layer = []
         for j in range(y):
             layer.append(BLOCKS[pixels[i, j]])
-            if BLOCKS[pixels[i, j]] == PLAYER:
-                player_pos = (j, i)
         map_list.append(layer)
 
-    return map_list, player_pos
+    return map_list

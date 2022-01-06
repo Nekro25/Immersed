@@ -4,9 +4,9 @@ import copy
 
 import sys
 import os
-import shutil
 
 from CONSTANTS import *
+from data_base import *
 
 # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -
 # это количество пикселей, которое занимает нарисованный вариант символа в ширину.
@@ -50,9 +50,7 @@ continue_button = gui.elements.UIButton(
 )
 exit_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (
-            MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
-            MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ",
@@ -60,9 +58,7 @@ exit_button = gui.elements.UIButton(
 )
 settings_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (
-            MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
-            MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НАСТРОЙКИ",
@@ -265,9 +261,9 @@ def main_menu(screen, background):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     if event.ui_element == new_game_button:
                         start_screen(screen)
-                        return
+                        return new_game()
                     if event.ui_element == continue_button:
-                        return
+                        return get_save()
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:

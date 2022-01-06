@@ -3,14 +3,14 @@ from CONSTANTS import LIFEBAR_img, HEIGHT, SECOND
 
 
 class LifeBar(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, ox, hp):
         super().__init__()
         self.image = LIFEBAR_img
         self.rect = self.image.get_rect().move(50, HEIGHT - 300)
-        self.oxygen_lvl = 100
+        self.oxygen_lvl = ox
         self.oxygen_event = pygame.USEREVENT + 1
         pygame.time.set_timer(self.oxygen_event, SECOND)
-        self.health_lvl = 100
+        self.health_lvl = hp
 
     def draw_ox_lvl(self):
         ox_lvl_img = pygame.Surface((60, 200))
