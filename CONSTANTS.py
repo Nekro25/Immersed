@@ -134,3 +134,10 @@ DISPLAY_FRAMES = [load_image('Display_images/darkened_display_1.png'),
                   load_image('Display_images/darkened_display_22.png'),
                   load_image('Display_images/darkened_display_23.png'),
                   ]
+
+BUTTON_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
+
+MAIN_MENU_SOUNDTRACK_PATH = 'data/SFX/menu_soundtrack.mp3'
+GAME_SOUNDTRACK_PATH = 'data/SFX/game_soundtrack.mp3'
+SIREN_SOUNDTRACK_PATH = 'data/SFX/siren_sound.mp3'
+BEEP_SOUNDTRACK_PATH = 'data/SFX/beep_sound.wav'
