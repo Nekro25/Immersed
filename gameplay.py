@@ -18,23 +18,17 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
     barrier = pygame.sprite.Group()
     oxygen_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
-    coef_y = 0
-    for y in range(player.y - HEIGHT % BLOCK_SIZE // 2 - 1,
-                   player.y + HEIGHT % BLOCK_SIZE // 2 + 4):
-        coef_x = -3
-        for x in range(player.x - WIDTH % BLOCK_SIZE // 2,
-                       player.x + HEIGHT % BLOCK_SIZE // 2 + 10):
+    coef_y = -10
+    for y in range(player.y - HEIGHT // BLOCK_SIZE // 2 - 10,
+                   player.y + HEIGHT // BLOCK_SIZE // 2 + 10):
+        coef_x = -10
+        for x in range(player.x - WIDTH // BLOCK_SIZE // 2 - 10,
+                       player.x + WIDTH // BLOCK_SIZE // 2 + 10):
             if 0 <= y <= 249 and 0 <= x <= 499:
                 if map[x][y] == GROUND:
                     barrier.add(Structure(coef_x, coef_y, GROUND_img, screen_group))
                 elif map[x][y] == ICE:
                     barrier.add(Structure(coef_x, coef_y, ICE_img, screen_group))
-                elif map[x][y] == ICE_bg:
-                    bg = ICE_CAVE_BG_img
-                elif map[x][y] == WATER:
-                    bg = BACKGROUND_img
-                elif map[x][y] == GROUND_bg:
-                    bg = GROUND_CAVE_BG_img
                 elif map[x][y] == OXYGEN_FILLER:
                     Structure(coef_x - 3, coef_y - 3, OXYGEN_FILLER_img, screen_group,
                               oxygen_group)
@@ -66,6 +60,15 @@ def moving(group, player):
         player.move_right(group)
     if buttons_pressed[pygame.K_w]:
         player.move_up(group)
+
+
+def check_background(player, map):
+    if map[player.x][player.y] == ICE_bg:
+        return ICE_CAVE_BG_img
+    elif map[player.x][player.y] == WATER:
+        return BACKGROUND_img
+    elif map[player.x][player.y] == GROUND_bg:
+        return GROUND_CAVE_BG_img
 
 
 # Игровой цикл
@@ -151,6 +154,9 @@ def game_loop():
         if pygame.sprite.spritecollideany(player, oxygen_group):
             lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
+
+        bg = check_background(player, game_map)
+
         for i in screen_group:  # оптимизация
             i.kill()
         CLOCK.tick(FPS)
