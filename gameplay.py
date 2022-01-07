@@ -94,10 +94,10 @@ def game_loop():
     from ready_fonts import title_font
 
     # ---- ресурсы для главного меню ----
-
+    background = MAIN_MENU_BACKGROUND_img
     # 231 - половина длины надписи "IMMERSED" в пикселях
     render_text("IMMERSED", WIDTH / 2 - 231, HEIGHT / 3.5, 60, 1000, title_font,
-                MAIN_MENU_BACKGROUND_img)
+                background)
     # ---- ресурсы для главного меню ----
 
     # позиция игрока, количество кислорода, количество здоровья,
