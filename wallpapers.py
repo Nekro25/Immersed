@@ -5,7 +5,9 @@ from CONSTANTS import *
 from data_base import *
 from ready_fonts import *
 
-manager = gui.UIManager((WIDTH, HEIGHT))
+main_menu_manager = gui.UIManager((WIDTH, HEIGHT))
+end_screen_manager = gui.UIManager((WIDTH, HEIGHT))
+settings_menu_manager = gui.UIManager((WIDTH, HEIGHT))
 
 # ---- кнопки в главном меню ----
 new_game_button = gui.elements.UIButton(
@@ -14,7 +16,7 @@ new_game_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НОВАЯ ИГРА",
-    manager=manager
+    manager=main_menu_manager
 )
 continue_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -22,29 +24,46 @@ continue_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ПРОДОЛЖИТЬ",
-    manager=manager
+    manager=main_menu_manager
 )
 exit_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (
-        MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
+            MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ",
-    manager=manager
+    manager=main_menu_manager
 )
 settings_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
-        (
-        MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING), MAIN_MENU_BUTTON_Y_MARGIN),
+        (MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
+            MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НАСТРОЙКИ",
-    manager=manager
+    manager=main_menu_manager
 )
-
-
 # ---- кнопки в главном меню ----
+
+# ---- кнопки на экране смерти ----
+go_to_main_menu_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (END_SCREEN_BUTTON_X_MARGIN, END_SCREEN_BUTTON_Y_MARGIN),
+        (END_SCREEN_BUTTON_WIDTH, END_SCREEN_BUTTON_HEIGHT)
+    ),
+    text="ВЫЙТИ В ГЛАВНОЕ МЕНЮ",
+    manager=end_screen_manager
+)
+start_over_button = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (END_SCREEN_BUTTON_X_MARGIN, END_SCREEN_BUTTON_Y_MARGIN + END_SCREEN_BUTTON_SPACING + END_SCREEN_BUTTON_HEIGHT),
+        (END_SCREEN_BUTTON_WIDTH, END_SCREEN_BUTTON_HEIGHT)
+    ),
+    text="НАЧАТЬ ЗАНОВО",
+    manager=end_screen_manager
+)
+# ---- кнопки на экране смерти ----
 
 
 def next_word(text):
@@ -136,7 +155,7 @@ def start_screen(screen):
 
     screen.fill((0, 0, 0))
     pygame.display.flip()
-    pygame.time.wait(4000)
+    pygame.time.wait(4 * SECOND)
 
     while True:
         for event in pygame.event.get():
@@ -152,10 +171,10 @@ def start_screen(screen):
                 screen.blit(list_of_darkened_frames[idx % 23], (WIDTH / 2 - 350, HEIGHT / 2 - 245))
                 idx += 1
             else:
-                pygame.time.wait(1000)
+                pygame.time.wait(SECOND)
                 screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
                 pygame.display.flip()
-                pygame.time.wait(2000)
+                pygame.time.wait(2 * SECOND)
 
                 skip_pressed = render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
                                            space_length=5, waiting_time=80, step_by_step=True)
@@ -171,8 +190,34 @@ def start_screen(screen):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen, background):
-    screen.blit(background, (0, 0))
+def end_screen(screen):
+    end_text = "Вы умерли!"
+
+    background = END_SCREEN_BACKGROUND_img
+    render_text(end_text, WIDTH / 2 - 100, HEIGHT / 2 - 200, 12, 300, medium_font, background, space_length=5)
+    screen.blit(END_SCREEN_BACKGROUND_img, (0, 0))
+
+    while True:
+        tick = CLOCK.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.USEREVENT:
+                if event.user_type == gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == go_to_main_menu_button:
+                        main_menu(screen)
+                        return
+
+            end_screen_manager.process_events(event)
+
+        end_screen_manager.update(tick)
+        end_screen_manager.draw_ui(screen)
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
+def main_menu(screen):
+    screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
 
     # ---- цикл главного меню ----
     while True:
@@ -188,13 +233,13 @@ def main_menu(screen, background):
                     if event.ui_element == continue_button:
                         return get_save()
                     if event.ui_element == settings_button:
-                        pass
+                        end_screen(screen)
                     if event.ui_element == exit_button:
                         terminate()
 
-            manager.process_events(event)
+            main_menu_manager.process_events(event)
 
-        manager.update(tick)
-        manager.draw_ui(screen)
+        main_menu_manager.update(tick)
+        main_menu_manager.draw_ui(screen)
         pygame.display.flip()
         CLOCK.tick(FPS)

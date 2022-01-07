@@ -84,16 +84,15 @@ def game_loop():
     from ready_fonts import title_font
 
     # ---- ресурсы для главного меню ----
-    background = load_image('all_image(shallow water).png')
 
     # 231 - половина длины надписи "IMMERSED" в пикселях
     render_text("IMMERSED", WIDTH / 2 - 231, HEIGHT / 3.5, 60, 1000, title_font,
-                background)
+                MAIN_MENU_BACKGROUND_img)
     # ---- ресурсы для главного меню ----
 
     # позиция игрока, количество кислорода, количество здоровья,
     # [корабль1, корабль2, корабль3, неизвестный реактор]
-    pos, ox, hp, progress = main_menu(screen, background)
+    pos, ox, hp, progress = main_menu(screen)
 
     running = True
 
