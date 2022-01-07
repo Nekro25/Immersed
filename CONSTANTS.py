@@ -80,6 +80,8 @@ OXYGEN_FILLER_img = load_image('oxygen_filler.png')
 REACTOR_img = load_image('reactor.png')
 EMPTY_DISPLAY_img = load_image('empty_display.png')
 PLAYER_ANIMATION_img = load_image('player_animation.png')
+MAIN_MENU_BACKGROUND_img = load_image('all_image(shallow water).png')
+END_SCREEN_BACKGROUND_img = load_image('end_screen.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815
@@ -93,6 +95,11 @@ MAIN_MENU_BUTTON_HEIGHT = 50
 MAIN_MENU_BUTTON_X_MARGIN = (WIDTH / 2) - MAIN_MENU_BUTTON_WIDTH * 2 - 45
 MAIN_MENU_BUTTON_Y_MARGIN = HEIGHT / 2
 MAIN_MENU_BUTTON_SPACING = 30
+
+END_SCREEN_BUTTON_WIDTH = 260
+END_SCREEN_BUTTON_HEIGHT = 50
+END_SCREEN_BUTTON_X_MARGIN = (WIDTH - END_SCREEN_BUTTON_WIDTH) / 2
+END_SCREEN_BUTTON_Y_MARGIN = HEIGHT / 2 - 100
 
 CON = sqlite3.connect('game_data.db')
 CURSOR = CON.cursor()
