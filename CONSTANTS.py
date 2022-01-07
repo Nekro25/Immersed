@@ -82,6 +82,11 @@ EMPTY_DISPLAY_img = load_image('empty_display.png')
 PLAYER_ANIMATION_img = load_image('player_animation.png')
 MAIN_MENU_BACKGROUND_img = load_image('all_image(shallow water).png')
 END_SCREEN_BACKGROUND_img = load_image('end_screen.png')
+SHIP_1_img = load_image('spaceship_1.png')
+SHIP_2_img = load_image('spaceship_2.png')
+SHIP_3_img = load_image('spaceship_3.png')
+SHIP_4_img = load_image('spaceship_4.png')
+MAIN_SHIP_img = load_image('main_spaceship.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815

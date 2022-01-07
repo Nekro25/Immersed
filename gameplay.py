@@ -139,7 +139,7 @@ def game_loop():
                 if event.key == pygame.K_ESCAPE:
                     new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
                              progress)
-                    pos, ox, hp, progress = main_menu(screen, background)
+                    pos, ox, hp, progress = main_menu(screen)
                     player = Player(*pos)
                     lifebar.oxygen_lvl = ox
                     lifebar.health_lvl = hp
