@@ -3,7 +3,7 @@ import sys
 
 from CONSTANTS import *
 from picture2matrix import picture_to_matrix
-from wallpapers import *
+# from wallpapers import *
 from interface import *
 from data_base import *
 from entities import *
@@ -80,23 +80,17 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    # ---- ресурсы для главного меню ----
-    big_font_picture = pygame.transform.scale(
-        load_image(FONT_PATH, color_key=(0, 0, 0)),
-        (FONT_IMG_WIDTH * 6, FONT_IMG_HEIGHT * 6)
-    )
-    title_font = generate_custom_font(big_font_picture, font, (255, 254, 255),
-                                      block_width=FONT_BLOCK_WIDTH * 6,
-                                      block_height=FONT_BLOCK_HEIGHT * 6,
-                                      barrier=FONT_BARRIER * 6)
+    from wallpapers import main_menu, render_text
+    from ready_fonts import title_font
 
+    # ---- ресурсы для главного меню ----
     background = load_image('all_image(shallow water).png')
 
     # 231 - половина длины надписи "IMMERSED" в пикселях
-    render_text("IMMERSED", (WIDTH / 2) - 231, HEIGHT / 3.5, 60, 1000, title_font,
+    render_text("IMMERSED", WIDTH / 2 - 231, HEIGHT / 3.5, 60, 1000, title_font,
                 background)
-
     # ---- ресурсы для главного меню ----
+
     # позиция игрока, количество кислорода, количество здоровья,
     # [корабль1, корабль2, корабль3, неизвестный реактор]
     pos, ox, hp, progress = main_menu(screen, background)
