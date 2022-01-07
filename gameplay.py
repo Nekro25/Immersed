@@ -10,6 +10,7 @@ from entities import *
 
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
                    pygame.K_d: False}
+previous_bg = None
 
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
@@ -49,7 +50,7 @@ def draw_screen(screen, player, map, camera, lifebar):
     return barrier, screen_group, oxygen_group
 
 
-# функция проверяет нажатие клавишь и передвигает персонажа
+# функция проверяет нажатие клавиш и передвигает персонажа
 def moving(group, player):
     global buttons_pressed
     if buttons_pressed[pygame.K_a]:
@@ -64,10 +65,19 @@ def moving(group, player):
 
 def check_background(player, map):
     if map[player.x][player.y] == (ICE_bg or ICE):
+        if previous_bg != ICE_CAVE_BG_img:
+            pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
+            pygame.mixer.music.play(-1)
         return ICE_CAVE_BG_img
     elif map[player.x][player.y] == WATER:
+        if previous_bg != BACKGROUND_img:
+            pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
+            pygame.mixer.music.play(-1)
         return BACKGROUND_img
     elif map[player.x][player.y] == (GROUND_bg or GROUND):
+        if previous_bg != GROUND_CAVE_BG_img:
+            pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
+            pygame.mixer.music.play(-1)
         return GROUND_CAVE_BG_img
     else:
         return BACKGROUND_img
@@ -147,7 +157,7 @@ def game_loop():
                     lifebar.health_lvl = hp
 
             if event.type == lifebar.oxygen_event:
-                lifebar.oxygen_lvl -= 1
+                lifebar.oxygen_lvl -= 50
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
@@ -166,7 +176,20 @@ def game_loop():
             lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
 
+        global previous_bg
+        previous_bg = bg
         bg = check_background(player, game_map)
+
+        # if bg != previous_bg:
+        #     if bg == ICE_CAVE_BG_img:
+        #         pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
+        #         pygame.mixer.music.play(-1)
+        #     elif bg == GROUND_CAVE_BG_img:
+        #         pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
+        #         pygame.mixer.music.play(-1)
+        #     else:
+        #         pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
+        #         pygame.mixer.music.play(-1)
 
         for i in screen_group:  # оптимизация
             i.kill()

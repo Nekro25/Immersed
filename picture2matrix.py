@@ -5,7 +5,6 @@ from CONSTANTS import *
 def picture_to_matrix():
     file_name = f"data/{MAP_NAME}"
     map_list = []
-    player_pos = (0, 0)
 
     im = Image.open(file_name)
     pixels = im.load()
