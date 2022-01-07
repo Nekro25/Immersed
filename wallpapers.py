@@ -29,7 +29,7 @@ continue_button = gui.elements.UIButton(
 exit_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
         (MAIN_MENU_BUTTON_X_MARGIN + 2 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
-            MAIN_MENU_BUTTON_Y_MARGIN),
+         MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ",
@@ -38,7 +38,7 @@ exit_button = gui.elements.UIButton(
 settings_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
         (MAIN_MENU_BUTTON_X_MARGIN + 3 * (MAIN_MENU_BUTTON_WIDTH + MAIN_MENU_BUTTON_SPACING),
-            MAIN_MENU_BUTTON_Y_MARGIN),
+         MAIN_MENU_BUTTON_Y_MARGIN),
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НАСТРОЙКИ",
@@ -63,6 +63,8 @@ start_over_button = gui.elements.UIButton(
     text="НАЧАТЬ ЗАНОВО",
     manager=end_screen_manager
 )
+
+
 # ---- кнопки на экране смерти ----
 
 
@@ -99,7 +101,7 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, spac
     for idx, char in enumerate(text):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                return True
+                return
 
         if char not in [' ', '\n']:
             try:
@@ -147,7 +149,7 @@ def start_screen(screen):
                  "После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить " \
                  "его и продолжить свой путь."
 
-    command_text = "Нажмите любую клавишу на клавиатуре, чтобы продолжить."
+    command_text = "Нажмите любую клавишу на клавиатуре, чтобы пропустить."
 
     idx = 0
     show_preview = True
@@ -157,11 +159,16 @@ def start_screen(screen):
     pygame.display.flip()
     pygame.time.wait(4 * SECOND)
 
+    pygame.mixer.music.load(SIREN_SOUNDTRACK_PATH)
+    pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.play(fade_ms=4 * SECOND)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.KEYDOWN:
+                pygame.mixer.music.stop()
                 return
 
         if show_preview:
@@ -172,12 +179,18 @@ def start_screen(screen):
                 idx += 1
             else:
                 pygame.time.wait(SECOND)
+                pygame.mixer.music.stop()
                 screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
                 pygame.display.flip()
                 pygame.time.wait(2 * SECOND)
 
-                skip_pressed = render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                                           space_length=5, waiting_time=80, step_by_step=True)
+                pygame.mixer.music.load(BEEP_SOUNDTRACK_PATH)
+                pygame.mixer.music.play(-1)
+                render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                            space_length=5, waiting_time=80, step_by_step=True)
+                pygame.mixer.music.stop()
+                skip_pressed = True
+                pygame.time.wait(SECOND)
                 show_preview = False
                 if skip_pressed:
                     return
@@ -204,9 +217,9 @@ def end_screen(screen):
                 terminate()
             if event.type == pygame.USEREVENT:
                 if event.user_type == gui.UI_BUTTON_PRESSED:
+                    BUTTON_SOUND.play()
                     if event.ui_element == go_to_main_menu_button:
-                        main_menu(screen)
-                        return
+                        return main_menu(screen, was_died=True)
 
             end_screen_manager.process_events(event)
 
@@ -216,8 +229,11 @@ def end_screen(screen):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen):
+def main_menu(screen, was_died=False):
     screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
+
+    pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
+    pygame.mixer.music.play(-1)
 
     # ---- цикл главного меню ----
     while True:
@@ -227,13 +243,21 @@ def main_menu(screen):
                 terminate()
             if event.type == pygame.USEREVENT:
                 if event.user_type == gui.UI_BUTTON_PRESSED:
+                    BUTTON_SOUND.play()
                     if event.ui_element == new_game_button:
+                        pygame.mixer.music.load(GAME_SOUNDTRACK_PATH)
+                        pygame.mixer.music.play(-1)
+
                         start_screen(screen)
                         return new_game()
                     if event.ui_element == continue_button:
-                        return get_save()
+                        if not was_died:
+                            pygame.mixer.music.load(GAME_SOUNDTRACK_PATH)
+                            pygame.mixer.music.play(-1)
+
+                            return get_save()
                     if event.ui_element == settings_button:
-                        end_screen(screen)
+                        pass
                     if event.ui_element == exit_button:
                         terminate()
 

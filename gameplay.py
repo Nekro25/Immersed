@@ -80,7 +80,7 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    from wallpapers import main_menu, render_text
+    from wallpapers import main_menu, render_text, end_screen
     from ready_fonts import title_font
 
     # ---- ресурсы для главного меню ----
@@ -110,8 +110,8 @@ def game_loop():
         screen.blit(bg, (-player.x, -player.y))
 
         barrier_group, screen_group, oxygen_group = draw_screen(screen, player,
-                                                                    game_map, camera,
-                                                                    lifebar)
+                                                                game_map, camera,
+                                                                lifebar)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -149,6 +149,15 @@ def game_loop():
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
+
+        if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
+            pos, ox, hp, progress = end_screen(screen)
+            player = Player(*pos)
+            lifebar.oxygen_lvl = ox
+            lifebar.health_lvl = hp
+            for button in buttons_pressed.keys():
+                buttons_pressed[button] = False
+
         if pygame.sprite.spritecollideany(player, oxygen_group):
             lifebar.oxygen_lvl = 100
         moving(barrier_group, player)
