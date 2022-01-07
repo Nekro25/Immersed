@@ -157,7 +157,7 @@ def game_loop():
                     lifebar.health_lvl = hp
 
             if event.type == lifebar.oxygen_event:
-                lifebar.oxygen_lvl -= 50
+                lifebar.oxygen_lvl -= 1
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
