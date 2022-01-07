@@ -92,45 +92,45 @@ class Player(pygame.sprite.Sprite):
     # движение игрока в пространстве
     def move_up(self, group):
         self.map_y -= self.speed / FPS
-        self.rect.y -= self.speed // 30
+        self.rect.y -= self.speed // 50
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.y += self.speed // 30
+            self.rect.y += self.speed // 50
             self.map_y += self.speed / FPS
             return
-        self.rect.y += self.speed // 30
+        self.rect.y += self.speed // 50
         self.y = int(self.map_y) // BLOCK_SIZE
         self.cell_y = int(self.map_y) % BLOCK_SIZE
 
     def move_down(self, group):
         self.map_y += self.speed / FPS
-        self.rect.y += self.speed // 30
+        self.rect.y += self.speed // 50
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.y -= self.speed // 30
+            self.rect.y -= self.speed // 50
             self.map_y -= self.speed / FPS
             return
-        self.rect.y -= self.speed // 30
+        self.rect.y -= self.speed // 50
         self.y = int(self.map_y) // BLOCK_SIZE
         self.cell_y = int(self.map_y) % BLOCK_SIZE
 
     def move_left(self, group):
         self.map_x -= self.speed / FPS
-        self.rect.x -= self.speed // 30
+        self.rect.x -= self.speed // 50
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.x += self.speed // 30
+            self.rect.x += self.speed // 50
             self.map_x += self.speed / FPS
             return
-        self.rect.x += self.speed // 30
+        self.rect.x += self.speed // 50
         self.x = int(self.map_x) // BLOCK_SIZE
         self.cell_x = int(self.map_x) % BLOCK_SIZE
 
     def move_right(self, group):
         self.map_x += self.speed / FPS
-        self.rect.x += self.speed // 30
+        self.rect.x += self.speed // 50
         if pygame.sprite.spritecollideany(self, group):
-            self.rect.x -= self.speed // 30
+            self.rect.x -= self.speed // 50
             self.map_x -= self.speed / FPS
             return
-        self.rect.x -= self.speed // 30
+        self.rect.x -= self.speed // 50
         self.x = int(self.map_x) // BLOCK_SIZE
         self.cell_x = int(self.map_x) % BLOCK_SIZE
 
