@@ -219,7 +219,7 @@ def end_screen(screen):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == go_to_main_menu_button:
-                        return main_menu(screen, was_died=True)
+                        return main_menu(screen)
 
             end_screen_manager.process_events(event)
 
@@ -251,11 +251,12 @@ def main_menu(screen, was_died=False):
                         start_screen(screen)
                         return new_game()
                     if event.ui_element == continue_button:
+                        pos, ox, hp, progress, was_died = get_save()
                         if not was_died:
                             pygame.mixer.music.load(GAME_SOUNDTRACK_PATH)
                             pygame.mixer.music.play(-1)
 
-                            return get_save()
+                            return pos, ox, hp, progress
                     if event.ui_element == settings_button:
                         pass
                     if event.ui_element == exit_button:

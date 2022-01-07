@@ -138,7 +138,9 @@ def game_loop():
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
                     new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
-                             progress)
+                             progress, 0)
+                    for button in buttons_pressed.keys():
+                        buttons_pressed[button] = False
                     pos, ox, hp, progress = main_menu(screen)
                     player = Player(*pos)
                     lifebar.oxygen_lvl = ox
@@ -151,6 +153,8 @@ def game_loop():
                 player.update(buttons_pressed)
 
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
+            new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
+                     1)
             pos, ox, hp, progress = end_screen(screen)
             player = Player(*pos)
             lifebar.oxygen_lvl = ox

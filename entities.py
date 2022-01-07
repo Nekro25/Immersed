@@ -45,7 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 0
         self.x = int(x)  # позиция на карте по кординатам массива
         self.y = int(y)
-        self.speed = 300
+        self.speed = 400
         self.cell_x = 0  # позиция относительно клетки внутри которой игрок
         self.cell_y = 0
         self.map_x = int(x) * BLOCK_SIZE  # Позиция относительно всей карты
