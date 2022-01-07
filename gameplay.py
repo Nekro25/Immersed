@@ -14,7 +14,7 @@ buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera, lifebar, bg):
+def draw_screen(screen, player, map, camera, lifebar):
     barrier = pygame.sprite.Group()
     oxygen_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
@@ -46,7 +46,7 @@ def draw_screen(screen, player, map, camera, lifebar, bg):
     screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
     screen_group.draw(screen)
-    return barrier, screen_group, bg, oxygen_group
+    return barrier, screen_group, oxygen_group
 
 
 # функция проверяет нажатие клавишь и передвигает персонажа
@@ -63,12 +63,14 @@ def moving(group, player):
 
 
 def check_background(player, map):
-    if map[player.x][player.y] == ICE_bg:
+    if map[player.x][player.y] == (ICE_bg or ICE):
         return ICE_CAVE_BG_img
     elif map[player.x][player.y] == WATER:
         return BACKGROUND_img
-    elif map[player.x][player.y] == GROUND_bg:
+    elif map[player.x][player.y] == (GROUND_bg or GROUND):
         return GROUND_CAVE_BG_img
+    else:
+        return BACKGROUND_img
 
 
 # Игровой цикл
@@ -108,9 +110,9 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group, bg, oxygen_group = draw_screen(screen, player,
+        barrier_group, screen_group, oxygen_group = draw_screen(screen, player,
                                                                     game_map, camera,
-                                                                    lifebar, bg)
+                                                                    lifebar)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -145,6 +147,9 @@ def game_loop():
 
             if event.type == lifebar.oxygen_event:
                 lifebar.oxygen_lvl -= 1
+
+            if event.type == player.animate_event:
+                player.update(buttons_pressed)
         if pygame.sprite.spritecollideany(player, oxygen_group):
             lifebar.oxygen_lvl = 100
         moving(barrier_group, player)

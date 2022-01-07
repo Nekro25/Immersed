@@ -15,7 +15,7 @@ def load_image(filename, color_key=None):
     if not os.path.isfile(fullname):
         raise FileError(f"Файл с изображением '{fullname}' не найден")
     image = pygame.image.load(fullname)
-    if color_key is not None:
+    if color_key:
         image = image.convert()
         if color_key == -1:
             color_key = image.get_at((0, 0))
@@ -79,6 +79,7 @@ GROUND_CAVE_BG_img = load_image('cave_background.png')
 OXYGEN_FILLER_img = load_image('oxygen_filler.png')
 REACTOR_img = load_image('reactor.png')
 EMPTY_DISPLAY_img = load_image('empty_display.png')
+PLAYER_ANIMATION_img = load_image('player_animation.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815

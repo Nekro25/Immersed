@@ -5,7 +5,7 @@ def new_game():  # новая игра
     CURSOR.execute('UPDATE progress SET player_pos = "46, 377", oxygen = 100, health = 100,\
      ship_1 = "False", ship_2 = "False", ship_3 = "False", unknown_reactor = "False"')
     CON.commit()
-    return (40, 366), 100, 100, [False, False, False, False]
+    return (46, 377), 100, 100, [False, False, False, False]
     # y и x поменялись местами
 
 
