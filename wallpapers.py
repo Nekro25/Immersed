@@ -155,6 +155,8 @@ def start_screen(screen):
     show_preview = True
     skip_pressed = False
 
+    pygame.mixer.music.stop()
+
     screen.fill((0, 0, 0))
     pygame.display.flip()
     pygame.time.wait(4 * SECOND)
@@ -207,8 +209,11 @@ def end_screen(screen):
     end_text = "Вы умерли!"
 
     background = END_SCREEN_BACKGROUND_img
-    render_text(end_text, WIDTH / 2 - 100, HEIGHT / 2 - 200, 12, 300, medium_font, background, space_length=5)
+    render_text(end_text, (WIDTH - 136) / 2, HEIGHT / 2 - 200, 12, 300, medium_font, background, space_length=5)
     screen.blit(END_SCREEN_BACKGROUND_img, (0, 0))
+
+    pygame.mixer.music.load(AFTER_DEATH_SOUNDTRACK_PATH)
+    pygame.mixer.music.play(-1)
 
     while True:
         tick = CLOCK.tick(FPS)
@@ -220,6 +225,8 @@ def end_screen(screen):
                     BUTTON_SOUND.play()
                     if event.ui_element == go_to_main_menu_button:
                         return main_menu(screen, was_died=True)
+                    if event.ui_element == start_over_button:
+                        return main_menu(screen, start_new_game=True)
 
             end_screen_manager.process_events(event)
 
@@ -229,11 +236,19 @@ def end_screen(screen):
         CLOCK.tick(FPS)
 
 
-def main_menu(screen, was_died=False):
+def main_menu(screen, was_died=False, start_new_game=False):
     screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
 
     pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
     pygame.mixer.music.play(-1)
+
+    if start_new_game:
+        start_screen(screen)
+
+        pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
+        pygame.mixer.music.play(-1)
+
+        return new_game()
 
     # ---- цикл главного меню ----
     while True:
@@ -245,14 +260,15 @@ def main_menu(screen, was_died=False):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == new_game_button:
-                        pygame.mixer.music.load(GAME_SOUNDTRACK_PATH)
+                        start_screen(screen)
+
+                        pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
                         pygame.mixer.music.play(-1)
 
-                        start_screen(screen)
                         return new_game()
                     if event.ui_element == continue_button:
                         if not was_died:
-                            pygame.mixer.music.load(GAME_SOUNDTRACK_PATH)
+                            pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
                             pygame.mixer.music.play(-1)
 
                             return get_save()
