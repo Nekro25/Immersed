@@ -20,6 +20,8 @@ monster_animate_img = PURPLE_SHARK_ANIMATION_img
 monster_x = 121
 monster_y = 51
 
+monster_respawn_time = 0
+
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
@@ -131,7 +133,7 @@ def check_background(player, map):
 
 # Игровой цикл
 def game_loop():
-    global monster_animate_img, monster_x, monster_y, monster_img, monster
+    global monster_animate_img, monster_x, monster_y, monster_img, monster, monster_respawn_time
     pygame.init()
     pygame.display.set_caption('Immersed')
 
@@ -211,6 +213,8 @@ def game_loop():
 
             if event.type == lifebar.oxygen_event:
                 lifebar.oxygen_lvl -= 1
+                if lifebar.health_lvl < 100 and not player.bitten:
+                    lifebar.health_lvl += 2
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
@@ -218,17 +222,22 @@ def game_loop():
                     monster.update()
 
             if event.type == create_monster_event:
-                coords = [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2), (WIDTH // 2, -2),
-                          (WIDTH // 2, HEIGHT + 2), (WIDTH + 2, -2),
-                          (WIDTH + 2, HEIGHT // 2), (WIDTH + 2, HEIGHT + 2)]
-                shuffle(coords)
-                for i in coords:
-                    monster = Enemy(*i, monster_img, monster_animate_img, 5,
-                                    1, monster_x, monster_y)
-                    if pygame.sprite.spritecollideany(monster, barrier_group):
-                        monster.kill()
-                    else:
-                        break
+                if monster_respawn_time == 40:
+                    monster_respawn_time = 0
+                    coords = [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2),
+                              (WIDTH // 2, -2),
+                              (WIDTH // 2, HEIGHT + 2), (WIDTH + 2, -2),
+                              (WIDTH + 2, HEIGHT // 2), (WIDTH + 2, HEIGHT + 2)]
+                    shuffle(coords)
+                    for i in coords:
+                        monster = Enemy(*i, monster_img, monster_animate_img, 5,
+                                        1, monster_x, monster_y)
+                        if pygame.sprite.spritecollideany(monster, barrier_group):
+                            monster.kill()
+                        else:
+                            break
+                else:
+                    monster_respawn_time += 1
 
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
             new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
@@ -237,12 +246,14 @@ def game_loop():
             player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
             lifebar.oxygen_lvl = ox
             lifebar.health_lvl = hp
+            monster_respawn_time = 0
             for button in buttons_pressed.keys():
                 buttons_pressed[button] = False
 
         collide_obj = pygame.sprite.spritecollideany(player, oxygen_group)
         if collide_obj:
             lifebar.oxygen_lvl = 100
+            player.bitten = False
             if collide_obj.ship_num:
                 if progress[collide_obj.ship_num - 1] == 0:
                     progress[collide_obj.ship_num - 1] = 1
@@ -257,9 +268,10 @@ def game_loop():
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
         if monster:
-            if pygame.sprite.collide_mask(player, monster):
+            if pygame.sprite.collide_mask(player, monster) and not monster.bited:
                 monster.bited = True
                 lifebar.health_lvl -= 10
+                player.bitten = True
 
         moving(barrier_group, player, monster)
 
