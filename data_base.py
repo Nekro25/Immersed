@@ -50,7 +50,6 @@ def set_effects_volume(volume):
 
 def get_statistics():
     steps, monsters, time, bites = CURSOR.execute('SELECT * FROM statistics').fetchall()[0]
-    print(steps, monsters, time, bites)
     dict = {'steps': steps, 'monsters': monsters, 'time': time, 'bites': bites}
     return dict
 

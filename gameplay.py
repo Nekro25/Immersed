@@ -275,9 +275,15 @@ def game_loop():
                     elif all(progress):
                         render_tablet(screen, render_text, medium_font,
                                       BATTERY_COLLECTED_text)
-                        win_screen(screen)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
+            elif collide_obj.ship_num == 0:
+                if all(progress):
+                    win_screen(screen)
+                elif all(progress[:-1]) and not progress[-1]:
+                    # плохая концовка
+                    pass
+        # проверка н укус
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:
                 monster.bited = True
