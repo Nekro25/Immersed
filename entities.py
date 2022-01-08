@@ -16,20 +16,6 @@ class Camera:
         self.y_coef = object.cell_y
 
 
-# class AnimatedSprite(pygame.sprite.Sprite):
-#     def __init__(self, sheet, columns, rows, x, y):
-#         super().__init__()
-#         self.frames = []
-#         cut_sheet(self, sheet, 5, BLOCK_SIZE)
-#         self.cur_frame = 0
-#         self.image = self.frames[self.cur_frame]
-#         self.rect = self.rect.move(x, y)
-#
-#     def update(self):
-#         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-#         self.image = self.frames[self.cur_frame]
-
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, y, x, *args):
         super().__init__(*args)
@@ -45,7 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = 0
         self.x = int(x)  # позиция на карте по кординатам массива
         self.y = int(y)
-        self.speed = 400
+        self.speed = 800
         self.cell_x = 0  # позиция относительно клетки внутри которой игрок
         self.cell_y = 0
         self.map_x = int(x) * BLOCK_SIZE  # Позиция относительно всей карты
@@ -136,9 +122,10 @@ class Player(pygame.sprite.Sprite):
 
 
 class Structure(pygame.sprite.Sprite):
-    def __init__(self, x, y, img, *args):
+    def __init__(self, x, y, img, *args, ship_num=None):
         super().__init__(*args)
         self.x = x
         self.y = y
+        self.ship_num = ship_num
         self.image = img
         self.rect = self.image.get_rect().move(50 * self.x, 50 * self.y)

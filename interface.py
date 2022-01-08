@@ -1,5 +1,5 @@
 import pygame
-from CONSTANTS import LIFEBAR_img, HEIGHT, SECOND
+from CONSTANTS import *
 
 
 class LifeBar(pygame.sprite.Sprite):
@@ -31,3 +31,10 @@ class LifeBar(pygame.sprite.Sprite):
         hp_lvl.image = hp_lvl_img
         hp_lvl.rect = hp_lvl_img.get_rect().move(190, HEIGHT - 275)
         return hp_lvl
+
+
+def render_tablet(screen, render_text, medium_font, text):
+    screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+    render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600,
+                medium_font, screen, space_length=5, waiting_time=80,
+                step_by_step=True)
