@@ -213,7 +213,7 @@ def start_screen(screen):
                 return
 
         if show_preview:
-            render_text(command_text, WIDTH / 2 - 300, 670, 8, 800, small_font, screen, space_length=3)
+            render_text(command_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
             pygame.display.flip()
             if idx <= 88:
                 screen.blit(list_of_darkened_frames[idx % 23], (WIDTH / 2 - 350, HEIGHT / 2 - 245))
@@ -228,7 +228,7 @@ def start_screen(screen):
                 play_music(BEEP_SOUNDTRACK_PATH, -1)
 
                 render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                            space_length=5)
+                            space_length=5, step_by_step=True, waiting_time=60)
 
                 pygame.mixer.music.stop()
                 skip_pressed = True
