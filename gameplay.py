@@ -14,10 +14,15 @@ buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
                    pygame.K_d: False}
 previous_bg = None
 
+monster_img = PURPLE_SHARK_img
+monster_animate_img = PURPLE_SHARK_ANIMATION_img
+monster_x = 121
+monster_y = 51
+
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
-def draw_screen(screen, player, map, camera, lifebar):
+def draw_screen(screen, player, map, camera, lifebar, monster):
     barrier = pygame.sprite.Group()
     oxygen_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
@@ -68,41 +73,59 @@ def draw_screen(screen, player, map, camera, lifebar):
     camera.track(player)
     for obj in screen_group:
         camera.update(obj)
+    if monster:
+        screen_group.add(monster)
     screen_group.add(lifebar.draw_ox_lvl())
     screen_group.add(lifebar.draw_hp_lvl())
     screen_group.add(lifebar)
+
     screen_group.draw(screen)
-    return barrier, screen_group, oxygen_group
+    return barrier, screen_group, oxygen_group, monster
 
 
 # функция проверяет нажатие клавиш и передвигает персонажа
-def moving(group, player):
+def moving(group, player, monster):
     global buttons_pressed
     if buttons_pressed[pygame.K_a]:
-        player.move_left(group)
+        player.move_left(group, monster)
     if buttons_pressed[pygame.K_s]:
-        player.move_down(group)
+        player.move_down(group, monster)
     if buttons_pressed[pygame.K_d]:
-        player.move_right(group)
+        player.move_right(group, monster)
     if buttons_pressed[pygame.K_w]:
-        player.move_up(group)
+        player.move_up(group, monster)
+    if monster:
+        monster.monster_moving(group)
 
 
 def check_background(player, map):
+    global monster_img, monster_animate_img, monster_x, monster_y
     if map[player.x][player.y - 1] == (ICE_bg or ICE):
         if previous_bg != ICE_CAVE_BG_img:
             pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
+            monster_img = JELLYFISH_img
+            monster_animate_img = JELLYFISH_ANIMATION_img
+            monster_x = 63
+            monster_y = 52
         return ICE_CAVE_BG_img
     elif map[player.x][player.y - 1] == WATER:
         if previous_bg != BACKGROUND_img:
             pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
+            monster_img = PURPLE_SHARK_img
+            monster_animate_img = PURPLE_SHARK_ANIMATION_img
+            monster_x = 120
+            monster_y = 51
         return BACKGROUND_img
     elif map[player.x][player.y - 1] == (GROUND_bg or GROUND):
         if previous_bg != GROUND_CAVE_BG_img:
             pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
+            monster_img = BABY_CTULHU_img
+            monster_animate_img = BABY_CTULHU_ANIMATION_img
+            monster_x = 82
+            monster_y = 74
         return GROUND_CAVE_BG_img
     else:
         return previous_bg
@@ -110,6 +133,7 @@ def check_background(player, map):
 
 # Игровой цикл
 def game_loop():
+    global monster_animate_img, monster_x, monster_y, monster_img, monster
     pygame.init()
     pygame.display.set_caption('Immersed')
 
@@ -133,8 +157,13 @@ def game_loop():
 
     game_map = picture_to_matrix()
     camera = Camera()
-    player = Player(*pos)
+    player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
     lifebar = LifeBar(ox, hp)
+    monster = None
+    monster_img = PURPLE_SHARK_img
+    monster_animate_img = PURPLE_SHARK_ANIMATION_img
+    monster_x = 120
+    monster_y = 51
 
     bg = BACKGROUND_img
 
@@ -144,8 +173,9 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group, oxygen_group = draw_screen(screen, player, game_map,
-                                                                camera, lifebar)
+        barrier_group, screen_group, oxygen_group, monster = draw_screen(screen, player,
+                                                                         game_map, camera,
+                                                                         lifebar, monster)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -176,7 +206,7 @@ def game_loop():
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
                     pos, ox, hp, progress = main_menu(screen)
-                    player = Player(*pos)
+                    player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
                     lifebar.oxygen_lvl = ox
                     lifebar.health_lvl = hp
 
@@ -185,12 +215,25 @@ def game_loop():
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
+                if monster:
+                    monster.update()
+
+            if event.type == create_monster_event:
+                for i in [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2), (WIDTH // 2, -2),
+                          (WIDTH // 2, HEIGHT + 2), (WIDTH + 2, -2),
+                          (WIDTH + 2, HEIGHT // 2), (WIDTH + 2, HEIGHT + 2)]:
+                    monster = Enemy(WIDTH // 2, HEIGHT, monster_img, monster_animate_img, 5,
+                                    1, monster_x, monster_y)
+                    if pygame.sprite.spritecollideany(monster, barrier_group):
+                        monster.kill()
+                    else:
+                        break
 
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
             new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
                      1)
             pos, ox, hp, progress = end_screen(screen)
-            player = Player(*pos)
+            player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
             lifebar.oxygen_lvl = ox
             lifebar.health_lvl = hp
             for button in buttons_pressed.keys():
@@ -205,13 +248,19 @@ def game_loop():
                     render_tablet(screen, render_text, medium_font,
                                   ship_messages[collide_obj.ship_num - 1])
                     if all(progress[:-1]) and not progress[-1]:
-                        render_tablet(screen, render_text, medium_font, PARTS_COLLECTED_text)
+                        render_tablet(screen, render_text, medium_font,
+                                      PARTS_COLLECTED_text)
                     elif all(progress):
-                        render_tablet(screen, render_text, medium_font, BATTERY_COLLECTED_text)
+                        render_tablet(screen, render_text, medium_font,
+                                      BATTERY_COLLECTED_text)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
+        if monster:
+            if pygame.sprite.collide_mask(player, monster):
+                monster.bited = True
+                lifebar.health_lvl -= 10
 
-        moving(barrier_group, player)
+        moving(barrier_group, player, monster)
 
         global previous_bg
         previous_bg = bg

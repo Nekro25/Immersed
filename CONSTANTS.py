@@ -45,6 +45,7 @@ SHIP_1 = 8
 SHIP_2 = 9
 SHIP_3 = 10
 SHIP_4 = 11
+MONSTER_1 = 13
 
 GRAY = (150, 150, 150, 255)
 BLUE = (0, 0, 255, 255)
@@ -59,6 +60,7 @@ GREEN_1 = (0, 255, 1, 255)
 GREEN_2 = (0, 255, 2, 255)
 GREEN_3 = (0, 255, 3, 255)
 GREEN_4 = (0, 255, 4, 255)
+RED_1 = (255, 1, 0, 255)
 
 BLOCKS = {
     GRAY: WATER,
@@ -73,15 +75,19 @@ BLOCKS = {
     GREEN_1: SHIP_1,
     GREEN_2: SHIP_2,
     GREEN_3: SHIP_3,
-    GREEN_4: SHIP_4
+    GREEN_4: SHIP_4,
+    RED_1: MONSTER_1
 }
 
 MAP_NAME = 'map.png'
 FPS = 60
 
+
 BLOCK_SIZE = 50
 PLAYER_SIZE = 50
 SECOND = 1000
+create_monster_event = pygame.USEREVENT + 4
+pygame.time.set_timer(create_monster_event, SECOND * 50)
 
 CLOCK = pygame.time.Clock()
 
@@ -109,6 +115,12 @@ SHIP_2_img = load_image('spaceship_2.png')
 SHIP_3_img = load_image('spaceship_3.png')
 SHIP_4_img = load_image('spaceship_4.png')
 MAIN_SHIP_img = load_image('main_spaceship.png')
+PURPLE_SHARK_img = load_image('purple_shark(monster).png')
+PURPLE_SHARK_ANIMATION_img = load_image('purple_shark_animation.png')
+JELLYFISH_img = load_image('eye_jellyfish(monster).png')
+JELLYFISH_ANIMATION_img = load_image('eye_jellyfish_animation.png')
+BABY_CTULHU_img = load_image('baby_ctulhu(monster).png')
+BABY_CTULHU_ANIMATION_img = load_image('baby_ctulhu_animation.png')
 
 FONT_PATH = 'Fonts/font.png'
 FONT_IMG_WIDTH = 815
