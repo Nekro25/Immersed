@@ -22,6 +22,8 @@ monster_y = 51
 
 monster_respawn_time = 0
 
+game_statistics = {'steps': 0, 'monsters': 0, 'time': 0, 'bites': 0}
+
 
 # эта функция перебирает все кординаты вокруг игрока и обновляет только то, что видит игрок,
 # благодаря этому игра меньше тормозит и не обрабатывает всю карту
@@ -88,15 +90,19 @@ def draw_screen(screen, player, map, camera, lifebar, monster):
 
 # функция проверяет нажатие клавиш и передвигает персонажа
 def moving(group, player, monster):
-    global buttons_pressed
+    global buttons_pressed, game_statistics
     if buttons_pressed[pygame.K_a]:
         player.move_left(group, monster)
+        game_statistics['steps'] += 1
     if buttons_pressed[pygame.K_s]:
         player.move_down(group, monster)
+        game_statistics['steps'] += 1
     if buttons_pressed[pygame.K_d]:
         player.move_right(group, monster)
+        game_statistics['steps'] += 1
     if buttons_pressed[pygame.K_w]:
         player.move_up(group, monster)
+        game_statistics['steps'] += 1
     if monster:
         monster.monster_moving(group)
 
@@ -133,7 +139,8 @@ def check_background(player, map):
 
 # Игровой цикл
 def game_loop():
-    global monster_animate_img, monster_x, monster_y, monster_img, monster, monster_respawn_time
+    global monster_animate_img, monster_x, monster_y, monster_img, monster
+    global monster_respawn_time, game_statistics
     pygame.init()
     pygame.display.set_caption('Immersed')
 
@@ -151,7 +158,7 @@ def game_loop():
 
     # позиция игрока, количество кислорода, количество здоровья,
     # [корабль1, корабль2, корабль3, корабль4, неизвестный реактор]
-    pos, ox, hp, progress = main_menu(screen)
+    pos, ox, hp, progress, game_statistics = main_menu(screen)
 
     running = True
 
@@ -202,25 +209,26 @@ def game_loop():
                     buttons_pressed[pygame.K_d] = False
                 if event.key == pygame.K_ESCAPE:
                     new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
-                             progress, 0)
+                             progress, 0, game_statistics)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
                     play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
-                    pos, ox, hp, progress = main_menu(screen)
+                    pos, ox, hp, progress, game_statistics = main_menu(screen)
                     player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
                     lifebar.oxygen_lvl = ox
                     lifebar.health_lvl = hp
-
+            # трата кислорода и восполнение жизней
             if event.type == lifebar.oxygen_event:
+                game_statistics['time'] += 1
                 lifebar.oxygen_lvl -= 1
                 if lifebar.health_lvl < 100 and not player.bitten:
                     lifebar.health_lvl += 2
-
+            # анимация
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
                 if monster:
                     monster.update()
-
+            # спавн существ через промежуток времени
             if event.type == create_monster_event:
                 if monster_respawn_time == 40:
                     monster_respawn_time = 0
@@ -234,11 +242,12 @@ def game_loop():
                                         1, monster_x, monster_y)
                         if pygame.sprite.spritecollideany(monster, barrier_group):
                             monster.kill()
+                            game_statistics['monsters'] -= 1
                         else:
                             break
                 else:
                     monster_respawn_time += 1
-
+        #  проверка смерти
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
             new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
                      1)
@@ -250,6 +259,7 @@ def game_loop():
             for button in buttons_pressed.keys():
                 buttons_pressed[button] = False
 
+        #  нахождение рядом с восполнителем кислорода
         collide_obj = pygame.sprite.spritecollideany(player, oxygen_group)
         if collide_obj:
             lifebar.oxygen_lvl = 100
@@ -271,6 +281,7 @@ def game_loop():
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:
                 monster.bited = True
+                game_statistics['bites'] += 1
                 lifebar.health_lvl -= 10
                 player.bitten = True
 
