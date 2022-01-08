@@ -1,0 +1,53 @@
+{
+  "button": {
+    "colours": {
+      "normal_bg": "#0184a9",
+      "hovered_bg": "#02537d",
+      "disabled_bg": "#0184a9",
+      "selected_bg": "#02537d",
+      "active_bg": "#193754",
+      "dark_bg": "#15191e",
+      "normal_text": "#FFFFFF",
+      "hovered_text": "#FFFFFF",
+      "selected_text": "#FFFFFF",
+      "disabled_text": "#6d736f",
+      "active_text": "#FFFFFF"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    },
+    "font": {
+      "name": "cozette",
+      "size": "14",
+      "bold": "0",
+      "italic": "0",
+      "regular_resource": {
+        "package": "installed_fonts",
+        "resource": "CozetteVector.ttf"
+      }
+    }
+  },
+  "@menu_screen": {},
+  "#menu_buttons": {
+    "misc": {
+      "shape": "rounded_rectangle",
+      "shape_corner_radius": "35"
+    }
+  },
+  "#settings_buttons": {
+    "misc": {
+      "shape": "ellipse"
+    },
+    "font": {
+      "name": "cozette",
+      "size": "20",
+      "bold": "0",
+      "italic": "0",
+      "regular_resource": {
+        "package": "installed_fonts",
+        "resource": "CozetteVector.ttf"
+      }
+    }
+  }
+}

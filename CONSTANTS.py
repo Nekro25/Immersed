@@ -89,6 +89,9 @@ SECOND = 1000
 create_monster_event = pygame.USEREVENT + 4
 pygame.time.set_timer(create_monster_event, SECOND * 40)
 
+EFFECTS_VOLUME = 1.0
+MUSIC_VOLUME = 1.0
+
 CLOCK = pygame.time.Clock()
 
 GROUND_img = load_image('ground.png')
@@ -104,12 +107,15 @@ GROUND_CAVE_BG_img = pygame.transform.scale(load_image('cave_background.png'),
                                             (WIDTH * 1.5, HEIGHT * 1.5))
 OXYGEN_FILLER_img = load_image('oxygen_filler.png')
 REACTOR_img = load_image('reactor.png')
+PLANET_img = load_image('planet.png')
 EMPTY_DISPLAY_img = load_image('empty_display.png')
 PLAYER_ANIMATION_img = load_image('player_animation.png')
 MAIN_MENU_BACKGROUND_img = pygame.transform.scale(
     load_image('all_image(shallow water).png'), (WIDTH, HEIGHT))
 END_SCREEN_BACKGROUND_img = pygame.transform.scale(load_image('end_screen.png'),
                                                    (WIDTH, HEIGHT))
+CROPPED_PLANET_img = pygame.transform.scale(load_image('cropped_planet.png'),
+                                            (WIDTH, HEIGHT))
 SHIP_1_img = load_image('spaceship_1.png')
 SHIP_2_img = load_image('spaceship_2.png')
 SHIP_3_img = load_image('spaceship_3.png')
@@ -214,3 +220,12 @@ ship_messages = ['Иследуя мир, вы нашли разрушенный 
                  'Вы успешно достаете батарею сверхвысокоц емкоси']
 PARTS_COLLECTED_text = 'Чтобы починить корабль все запчасти собраны, но вам кажется что заряда оставшегося на корабле может не хватить'
 BATTERY_COLLECTED_text = 'Теперь точно все готово, можно улетать'
+
+VOLUME_LEVEL_DASH_SPACING = 20
+VOLUME_CONTROL_BUTTON_WIDTH = 30
+VOLUME_CONTROL_BUTTON_HEIGHT = 30
+VOLUME_UP_BUTTON_X_MARGIN = WIDTH / 2 + 130
+VOLUME_DOWN_BUTTON_X_MARGIN = WIDTH / 2 - 130
+VOLUME_CONTROL_BUTTON_Y_MARGIN = 250
+VOLUME_CONTROL_BUTTON_SPACING = 150
+
