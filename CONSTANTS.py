@@ -4,6 +4,7 @@ import os
 import sys
 import sqlite3
 
+pygame.mixer.pre_init(44100, -16, 1, 512)
 pygame.init()
 WIDTH, HEIGHT = pygame.display.get_desktop_sizes()[0]
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
