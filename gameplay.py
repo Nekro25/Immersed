@@ -7,7 +7,7 @@ from picture2matrix import picture_to_matrix
 from interface import *
 from data_base import *
 from entities import *
-
+from sounds_and_music import play_music
 from ready_fonts import *
 
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
@@ -91,18 +91,15 @@ def moving(group, player):
 def check_background(player, map):
     if map[player.x][player.y - 1] == (ICE_bg or ICE):
         if previous_bg != ICE_CAVE_BG_img:
-            pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
-            pygame.mixer.music.play(-1)
+            play_music(SNOW_BIOM_SOUNDTRACK_PATH, -1)
         return ICE_CAVE_BG_img
     elif map[player.x][player.y - 1] == WATER:
         if previous_bg != BACKGROUND_img:
-            pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
-            pygame.mixer.music.play(-1)
+            play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
         return BACKGROUND_img
     elif map[player.x][player.y - 1] == (GROUND_bg or GROUND):
         if previous_bg != GROUND_CAVE_BG_img:
-            pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
-            pygame.mixer.music.play(-1)
+            play_music(CAVE_BIOM_SOUNDTRACK_PATH, -1)
         return GROUND_CAVE_BG_img
     else:
         return previous_bg
@@ -175,6 +172,8 @@ def game_loop():
                              progress, 0)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
+                    pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
+                    pygame.mixer.music.play(-1)
                     pos, ox, hp, progress = main_menu(screen)
                     player = Player(*pos)
                     lifebar.oxygen_lvl = ox

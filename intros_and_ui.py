@@ -2,9 +2,9 @@ import pygame
 import pygame_gui as gui
 
 from CONSTANTS import *
-import CONSTANTS
 from data_base import *
 from ready_fonts import *
+from sounds_and_music import play_music
 
 main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 end_screen_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
@@ -115,8 +115,6 @@ turn_up_effects_volume = gui.elements.UIButton(
     object_id=gui.core.ObjectID(class_id='@settings_screen',
                                 object_id='#settings_buttons')
 )
-
-
 # ---- кнопки в настройках ----
 
 
@@ -128,8 +126,8 @@ def settings_screen(screen):
                 12, 600, medium_font, screen, space_length=5)
 
     while True:
-        count_for_music = CONSTANTS.MUSIC_VOLUME * 10
-        count_for_effects = CONSTANTS.EFFECTS_VOLUME * 10
+        count_for_music = get_music_volume() * 10
+        count_for_effects = get_effects_volume() * 10
 
         music_dash_color = (255, 255, 255)
         effects_dash_color = (255, 255, 255)
@@ -148,24 +146,30 @@ def settings_screen(screen):
                              (VOLUME_DOWN_BUTTON_X_MARGIN + VOLUME_CONTROL_BUTTON_WIDTH + VOLUME_LEVEL_DASH_SPACING * i,
                               VOLUME_CONTROL_BUTTON_Y_MARGIN + VOLUME_CONTROL_BUTTON_SPACING + 7,
                               5, 15))
+
         tick = CLOCK.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    main_menu(screen)
+                    return
             if event.type == pygame.USEREVENT:
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == turn_up_effects_volume:
-                        CONSTANTS.EFFECTS_VOLUME += 0.1
+                        if get_effects_volume() < 1.0:
+                            set_effects_volume(0.1)
                     if event.ui_element == turn_down_effects_volume:
-                        CONSTANTS.EFFECTS_VOLUME -= 0.1
+                        if get_effects_volume() > 0:
+                            set_effects_volume(-0.1)
                     if event.ui_element == turn_up_music_volume:
-                        CONSTANTS.MUSIC_VOLUME += 0.1
+                        if get_music_volume() < 1.0:
+                            set_music_volume(0.1)
                     if event.ui_element == turn_down_music_volume:
-                        CONSTANTS.MUSIC_VOLUME -= 0.1
+                        if get_music_volume() > 0:
+                            set_music_volume(-0.1)
+                    pygame.mixer.music.set_volume(get_music_volume())
 
             settings_menu_manager.process_events(event)
 
@@ -198,9 +202,7 @@ def start_screen(screen):
     pygame.time.wait(4 * SECOND)
     screen.fill((0, 0, 0))
 
-    pygame.mixer.music.load(SIREN_SOUNDTRACK_PATH)
-    pygame.mixer.music.set_volume(0.2)
-    pygame.mixer.music.play(fade_ms=4 * SECOND)
+    play_music(SIREN_SOUNDTRACK_PATH, fade_ms=4 * SECOND)
 
     while True:
         for event in pygame.event.get():
@@ -223,8 +225,7 @@ def start_screen(screen):
                 pygame.display.flip()
                 pygame.time.wait(2 * SECOND)
 
-                pygame.mixer.music.load(BEEP_SOUNDTRACK_PATH)
-                pygame.mixer.music.play(-1)
+                play_music(BEEP_SOUNDTRACK_PATH, -1)
 
                 render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
                             space_length=5)
@@ -252,8 +253,7 @@ def end_screen(screen):
     render_text(end_text, (WIDTH - 136) / 2, HEIGHT / 2 - 200, 12, 300, medium_font, background, space_length=5)
     screen.blit(END_SCREEN_BACKGROUND_img, (0, 0))
 
-    pygame.mixer.music.load(AFTER_DEATH_SOUNDTRACK_PATH)
-    pygame.mixer.music.play(-1)
+    play_music(AFTER_DEATH_SOUNDTRACK_PATH, -1)
 
     while True:
         tick = CLOCK.tick(FPS)
@@ -279,22 +279,20 @@ def end_screen(screen):
 
 
 def main_menu(screen, start_new_game=False):
-    screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
 
     if not pygame.mixer.music.get_busy():
-        pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
-        pygame.mixer.music.play(-1)
+        play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
 
     if start_new_game:
         start_screen(screen)
 
-        pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
-        pygame.mixer.music.play(-1)
+        play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
 
         return new_game()
 
     # ---- цикл главного меню ----
     while True:
+        screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
         tick = CLOCK.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -305,15 +303,13 @@ def main_menu(screen, start_new_game=False):
                     if event.ui_element == new_game_button:
                         start_screen(screen)
 
-                        pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
-                        pygame.mixer.music.play(-1)
+                        play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
 
                         return new_game()
                     if event.ui_element == continue_button:
                         pos, ox, hp, progress, was_died = get_save()
                         if not was_died:
-                            pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
-                            pygame.mixer.music.play(-1)
+                            play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
 
                             return pos, ox, hp, progress
                     if event.ui_element == settings_button:
