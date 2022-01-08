@@ -32,6 +32,19 @@ def terminate():
     sys.exit()
 
 
+def play_music(*args):
+    from data_base import get_music_volume
+
+    pygame.mixer.music.load(args[0])
+    if len(args) > 1:
+        pygame.mixer.music.play(args[1])
+    else:
+        pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(get_music_volume())
+
+
+
+
 WATER = 0
 GROUND = 1
 ICE = 2
@@ -82,9 +95,6 @@ FPS = 60
 BLOCK_SIZE = 50
 PLAYER_SIZE = 50
 SECOND = 1000
-
-EFFECTS_VOLUME = 1.0
-MUSIC_VOLUME = 1.0
 
 CLOCK = pygame.time.Clock()
 
@@ -216,4 +226,3 @@ VOLUME_UP_BUTTON_X_MARGIN = WIDTH / 2 + 130
 VOLUME_DOWN_BUTTON_X_MARGIN = WIDTH / 2 - 130
 VOLUME_CONTROL_BUTTON_Y_MARGIN = 250
 VOLUME_CONTROL_BUTTON_SPACING = 150
-
