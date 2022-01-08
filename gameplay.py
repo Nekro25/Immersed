@@ -212,7 +212,7 @@ def game_loop():
                     lifebar.health_lvl = hp
 
             if event.type == lifebar.oxygen_event:
-                lifebar.oxygen_lvl -= 1
+                lifebar.oxygen_lvl -= 50
                 if lifebar.health_lvl < 100 and not player.bitten:
                     lifebar.health_lvl += 2
 

@@ -10,6 +10,7 @@ main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 end_screen_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 settings_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 
+
 # ---- кнопки в главном меню ----
 new_game_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -55,6 +56,7 @@ settings_button = gui.elements.UIButton(
 )
 # ---- кнопки в главном меню ----
 
+
 # ---- кнопки на экране смерти ----
 go_to_main_menu_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -62,7 +64,9 @@ go_to_main_menu_button = gui.elements.UIButton(
         (END_SCREEN_BUTTON_WIDTH, END_SCREEN_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ В ГЛАВНОЕ МЕНЮ",
-    manager=end_screen_manager
+    manager=end_screen_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 start_over_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -70,9 +74,12 @@ start_over_button = gui.elements.UIButton(
         (END_SCREEN_BUTTON_WIDTH, END_SCREEN_BUTTON_HEIGHT)
     ),
     text="НАЧАТЬ ЗАНОВО",
-    manager=end_screen_manager
+    manager=end_screen_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 # ---- кнопки на экране смерти ----
+
 
 # ---- кнопки в настройках ----
 turn_down_music_volume = gui.elements.UIButton(
@@ -169,6 +176,7 @@ def settings_screen(screen):
                     if event.ui_element == turn_down_music_volume:
                         if get_music_volume() > 0:
                             set_music_volume(-0.1)
+                    BUTTON_SOUND.set_volume(get_effects_volume())
                     pygame.mixer.music.set_volume(get_music_volume())
 
             settings_menu_manager.process_events(event)
