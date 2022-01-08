@@ -187,6 +187,46 @@ def settings_screen(screen):
         CLOCK.tick(FPS)
 
 
+def win_screen(screen):
+    text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
+                    """ \
+            "...Но вот досада! Слой льда перед вами слишком толстый и просто так его не пробить, " \
+            """активируйте щиты!
+ """ \
+           "...Отлично! Еле-еле, но лед вы все таки пробили. Теперь, вероятно, вы уже знаете, что если бы не добыли " \
+            """батарейку из реактора, то вскоре замерзли бы насмерть.
+                    """ \
+            "Отличная работа! Теперь вы можете возвращаться домой. Счастливого пути!"
+
+    skip_pressed = False
+
+    pygame.mixer.music.stop()
+
+    screen.blit(PLANET_img, (0, 0))
+    screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+    render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
+    pygame.display.flip()
+
+    play_music(BEEP_SOUNDTRACK_PATH, -1)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                pygame.mixer.music.stop()
+                return
+
+        render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                    space_length=5, step_by_step=True, waiting_time=60)
+
+        if skip_pressed:
+            return
+
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
 # ---- Функция показывает заставку, когда игрок начал новую игру ----
 def start_screen(screen):
     list_of_darkened_frames = DISPLAY_FRAMES
@@ -196,8 +236,6 @@ def start_screen(screen):
                  "пошло не по плану: вы слишком близко подлетели к одной из них и не смогли справиться с силой притяжения. " \
                  "После падения ваш корабль сильно пострадал, поэтому вам нужно как можно скорее восстановить " \
                  "его и продолжить свой путь."
-
-    command_text = "Нажмите любую клавишу на клавиатуре, чтобы пропустить."
 
     idx = 0
     show_preview = True
@@ -221,7 +259,7 @@ def start_screen(screen):
                 return
 
         if show_preview:
-            render_text(command_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
+            render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
             pygame.display.flip()
             if idx <= 88:
                 screen.blit(list_of_darkened_frames[idx % 23], (WIDTH / 2 - 350, HEIGHT / 2 - 245))
@@ -239,8 +277,7 @@ def start_screen(screen):
                             space_length=5, step_by_step=True, waiting_time=60)
 
                 pygame.mixer.music.stop()
-                skip_pressed = True
-                pygame.time.wait(SECOND)
+
                 show_preview = False
 
                 if skip_pressed:
@@ -309,7 +346,7 @@ def main_menu(screen, start_new_game=False):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == new_game_button:
-                        start_screen(screen)
+                        win_screen(screen)
 
                         play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
 

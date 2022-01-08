@@ -15,12 +15,12 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     """
     Функция генерирует кастомный шрифт, нарисованный по пикселям.
 
-    :param image:   картинка с нарисованными символами;
-    :param fnt:     словарь с символами;
-    :param color:   цвет шрифта;
+    :param image:         картинка с нарисованными символами;
+    :param fnt:           словарь с символами;
+    :param color:         цвет шрифта;
     :param block_width:   ширина ячейки с символом;
     :param block_height:  высота ячейки с символом;
-    :param barrier: толщина перегородки между символами на рисунке;
+    :param barrier:       толщина перегородки между символами на рисунке;
     :return:
     """
 
@@ -85,7 +85,6 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, spac
             except KeyError:
                 pass
         else:
-            # длина слова(в пикселях) вместе с символами пустой строки и пропусками
             next_word_length = sum(map(lambda s: font[s][0] + spacing, next_word(text[idx + 1:])))
 
             if word != '':
