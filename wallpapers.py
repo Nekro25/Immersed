@@ -188,12 +188,15 @@ def start_screen(screen):
 
                 pygame.mixer.music.load(BEEP_SOUNDTRACK_PATH)
                 pygame.mixer.music.play(-1)
+
                 render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
                             space_length=5, waiting_time=80, step_by_step=True)
+
                 pygame.mixer.music.stop()
                 skip_pressed = True
                 pygame.time.wait(SECOND)
                 show_preview = False
+
                 if skip_pressed:
                     return
 
@@ -265,7 +268,6 @@ def main_menu(screen, start_new_game=False):
                         pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
                         pygame.mixer.music.play(-1)
 
-                        start_screen(screen)
                         return new_game()
                     if event.ui_element == continue_button:
                         pos, ox, hp, progress, was_died = get_save()
