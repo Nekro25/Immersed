@@ -1,4 +1,4 @@
-from CONSTANTS import *
+from CONSTANTS import CURSOR, CON
 
 
 def new_game():  # новая игра
@@ -18,10 +18,28 @@ def new_save(pos_y, pos_x, ox, hp, progress, was_died):  # создать нов
 
 
 def get_save():  # получить сохраненные данные
-    items = list(CURSOR.execute("SELECT * FROM progress").fetchall()[0])
+    items = list(CURSOR.execute("SELECT * FROM progress").fetchall()[0])[:-2]
     pos = items.pop(0).split(', ')
     ox = items.pop(0)
     hp = items.pop(0)
     was_died = bool(items.pop(-1))
     progress = items
     return pos, ox, hp, progress, was_died
+
+
+def get_music_volume():
+    return CURSOR.execute("""SELECT music_volume FROM progress""").fetchone()[0]
+
+
+def get_effects_volume():
+    return CURSOR.execute("""SELECT effects_volume FROM progress""").fetchone()[0]
+
+
+def set_music_volume(volume):
+    CURSOR.execute("""UPDATE progress SET music_volume = music_volume + ?""", (volume,))
+    CON.commit()
+
+
+def set_effects_volume(volume):
+    CURSOR.execute("""UPDATE progress SET effects_volume = effects_volume + ?""", (volume,))
+    CON.commit()
