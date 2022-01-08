@@ -201,6 +201,7 @@ def game_loop():
             lifebar.oxygen_lvl = 100
             if collide_obj.ship_num:
                 if progress[collide_obj.ship_num - 1] == 0:
+                    progress[collide_obj.ship_num - 1] = 1
                     render_tablet(screen, render_text, medium_font,
                                   ship_messages[collide_obj.ship_num - 1])
                     if all(progress[:-1]) and not progress[-1]:
@@ -209,7 +210,6 @@ def game_loop():
                         render_tablet(screen, render_text, medium_font, BATTERY_COLLECTED_text)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
-                    progress[collide_obj.ship_num - 1] = 1
 
         moving(barrier_group, player)
 
