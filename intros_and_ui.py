@@ -346,7 +346,7 @@ def main_menu(screen, start_new_game=False):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == new_game_button:
-                        win_screen(screen)
+                        start_screen(screen)
 
                         play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
 
