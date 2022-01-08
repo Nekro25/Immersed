@@ -36,6 +36,10 @@ ICE_bg = 3
 GROUND_bg = 4
 OXYGEN_FILLER = 5
 REACTOR = 6
+SHIP_1 = 8
+SHIP_2 = 9
+SHIP_3 = 10
+SHIP_4 = 11
 
 GRAY = (150, 150, 150, 255)
 BLUE = (0, 0, 255, 255)
@@ -71,17 +75,22 @@ CLOCK = pygame.time.Clock()
 GROUND_img = load_image('ground.png')
 PLAYER_img = load_image('Player.png')
 WATER_img = load_image('water.png')
-BACKGROUND_img = load_image('all_image(shallow water).png')
+BACKGROUND_img = pygame.transform.scale(load_image('all_image(shallow water).png'),
+                                        (WIDTH * 1.5, HEIGHT * 1.5))
 LIFEBAR_img = load_image('lifebar.png')
 ICE_img = load_image('ice.png')
-ICE_CAVE_BG_img = load_image('ice_cave_background.png')
-GROUND_CAVE_BG_img = load_image('cave_background.png')
+ICE_CAVE_BG_img = pygame.transform.scale(load_image('ice_cave_background.png'),
+                                         (WIDTH * 1.5, HEIGHT * 1.5))
+GROUND_CAVE_BG_img = pygame.transform.scale(load_image('cave_background.png'),
+                                            (WIDTH * 1.5, HEIGHT * 1.5))
 OXYGEN_FILLER_img = load_image('oxygen_filler.png')
 REACTOR_img = load_image('reactor.png')
 EMPTY_DISPLAY_img = load_image('empty_display.png')
 PLAYER_ANIMATION_img = load_image('player_animation.png')
-MAIN_MENU_BACKGROUND_img = load_image('all_image(shallow water).png')
-END_SCREEN_BACKGROUND_img = load_image('end_screen.png')
+MAIN_MENU_BACKGROUND_img = pygame.transform.scale(
+    load_image('all_image(shallow water).png'), (WIDTH, HEIGHT))
+END_SCREEN_BACKGROUND_img = pygame.transform.scale(load_image('end_screen.png'),
+                                                   (WIDTH, HEIGHT))
 SHIP_1_img = load_image('spaceship_1.png')
 SHIP_2_img = load_image('spaceship_2.png')
 SHIP_3_img = load_image('spaceship_3.png')
