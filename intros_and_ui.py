@@ -2,12 +2,13 @@ import pygame
 import pygame_gui as gui
 
 from CONSTANTS import *
+import CONSTANTS
 from data_base import *
 from ready_fonts import *
 
-main_menu_manager = gui.UIManager((WIDTH, HEIGHT))
-end_screen_manager = gui.UIManager((WIDTH, HEIGHT))
-settings_menu_manager = gui.UIManager((WIDTH, HEIGHT))
+main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
+end_screen_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
+settings_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 
 # ---- кнопки в главном меню ----
 new_game_button = gui.elements.UIButton(
@@ -16,7 +17,9 @@ new_game_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НОВАЯ ИГРА",
-    manager=main_menu_manager
+    manager=main_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 continue_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -24,7 +27,9 @@ continue_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ПРОДОЛЖИТЬ",
-    manager=main_menu_manager
+    manager=main_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 exit_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -33,7 +38,9 @@ exit_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="ВЫЙТИ",
-    manager=main_menu_manager
+    manager=main_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 settings_button = gui.elements.UIButton(
     relative_rect=pygame.Rect(
@@ -42,7 +49,9 @@ settings_button = gui.elements.UIButton(
         (MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT)
     ),
     text="НАСТРОЙКИ",
-    manager=main_menu_manager
+    manager=main_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@menu_screen',
+                                object_id='#menu_buttons')
 )
 # ---- кнопки в главном меню ----
 
@@ -63,80 +72,107 @@ start_over_button = gui.elements.UIButton(
     text="НАЧАТЬ ЗАНОВО",
     manager=end_screen_manager
 )
-
-
 # ---- кнопки на экране смерти ----
 
+# ---- кнопки в настройках ----
+turn_down_music_volume = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (VOLUME_DOWN_BUTTON_X_MARGIN, VOLUME_CONTROL_BUTTON_Y_MARGIN),
+        (VOLUME_CONTROL_BUTTON_WIDTH, VOLUME_CONTROL_BUTTON_HEIGHT)
+    ),
+    text="-",
+    manager=settings_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@settings_screen',
+                                object_id='#settings_buttons')
+)
+turn_up_music_volume = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (VOLUME_UP_BUTTON_X_MARGIN, VOLUME_CONTROL_BUTTON_Y_MARGIN),
+        (VOLUME_CONTROL_BUTTON_WIDTH, VOLUME_CONTROL_BUTTON_HEIGHT)
+    ),
+    text="+",
+    manager=settings_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@settings_screen',
+                                object_id='#settings_buttons')
+)
+turn_down_effects_volume = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (VOLUME_DOWN_BUTTON_X_MARGIN, VOLUME_CONTROL_BUTTON_Y_MARGIN + VOLUME_CONTROL_BUTTON_SPACING),
+        (VOLUME_CONTROL_BUTTON_WIDTH, VOLUME_CONTROL_BUTTON_HEIGHT)
+    ),
+    text="-",
+    manager=settings_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@settings_screen',
+                                object_id='#settings_buttons')
+)
+turn_up_effects_volume = gui.elements.UIButton(
+    relative_rect=pygame.Rect(
+        (VOLUME_UP_BUTTON_X_MARGIN, VOLUME_CONTROL_BUTTON_Y_MARGIN + VOLUME_CONTROL_BUTTON_SPACING),
+        (VOLUME_CONTROL_BUTTON_WIDTH, VOLUME_CONTROL_BUTTON_HEIGHT)
+    ),
+    text="+",
+    manager=settings_menu_manager,
+    object_id=gui.core.ObjectID(class_id='@settings_screen',
+                                object_id='#settings_buttons')
+)
 
-def next_word(text):
-    for sym in ['.', ',', '!', '?', ' ']:
-        word = text[:text.find(sym)]
-        if ' ' not in word:
-            return word
+
+# ---- кнопки в настройках ----
 
 
-def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, space_length=3,
-                waiting_time=0, step_by_step=False):
-    """
-    Функция рендерит заданный текст с кастомным шрифтом.
+def settings_screen(screen):
+    screen.blit(CROPPED_PLANET_img, (0, 0))
+    render_text("Громкость музыки", (WIDTH - 232) / 2, VOLUME_CONTROL_BUTTON_Y_MARGIN - 50,
+                12, 600, medium_font, screen, space_length=5)
+    render_text("Громкость эффектов", (WIDTH - 262) / 2, VOLUME_CONTROL_BUTTON_Y_MARGIN + 100,
+                12, 600, medium_font, screen, space_length=5)
 
-    :param text:         текст для вывода;
-    :param margin_x:     величина горизонтального отступа от левой границы холста;
-    :param margin_y:     величина вертикального отступа от верхней границы холста;
-    :param spacing:      расстояние между символами;
-    :param max_width:    максимальная длина строки(в пикселях);
-    :param font:         шрифт;
-    :param screen:       холст;
-    :param space_length: длина пробела(в пикселях);
-    :param waiting_time: продолжительность ожидания после выведения каждой буквы(в миллисекундах);
-    :param step_by_step: выводит текст букву за буквой, если установлено значение True;
-    :return:
-    """
+    while True:
+        count_for_music = CONSTANTS.MUSIC_VOLUME * 10
+        count_for_effects = CONSTANTS.EFFECTS_VOLUME * 10
 
-    text += ' '
-    origin_x = margin_x
-    word = ''
-    next_word_length = 0
+        music_dash_color = (255, 255, 255)
+        effects_dash_color = (255, 255, 255)
 
-    for idx, char in enumerate(text):
+        for i in range(1, 11):
+            if i > count_for_music:
+                music_dash_color = (127, 127, 127)
+            if i > count_for_effects:
+                effects_dash_color = (127, 127, 127)
+
+            pygame.draw.rect(screen, music_dash_color,
+                             (VOLUME_DOWN_BUTTON_X_MARGIN + VOLUME_CONTROL_BUTTON_WIDTH + VOLUME_LEVEL_DASH_SPACING * i,
+                              VOLUME_CONTROL_BUTTON_Y_MARGIN + 7,
+                              5, 15))
+            pygame.draw.rect(screen, effects_dash_color,
+                             (VOLUME_DOWN_BUTTON_X_MARGIN + VOLUME_CONTROL_BUTTON_WIDTH + VOLUME_LEVEL_DASH_SPACING * i,
+                              VOLUME_CONTROL_BUTTON_Y_MARGIN + VOLUME_CONTROL_BUTTON_SPACING + 7,
+                              5, 15))
+        tick = CLOCK.tick(FPS)
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
             if event.type == pygame.KEYDOWN:
-                return
+                if event.key == pygame.K_ESCAPE:
+                    main_menu(screen)
+            if event.type == pygame.USEREVENT:
+                if event.user_type == gui.UI_BUTTON_PRESSED:
+                    BUTTON_SOUND.play()
+                    if event.ui_element == turn_up_effects_volume:
+                        CONSTANTS.EFFECTS_VOLUME += 0.1
+                    if event.ui_element == turn_down_effects_volume:
+                        CONSTANTS.EFFECTS_VOLUME -= 0.1
+                    if event.ui_element == turn_up_music_volume:
+                        CONSTANTS.MUSIC_VOLUME += 0.1
+                    if event.ui_element == turn_down_music_volume:
+                        CONSTANTS.MUSIC_VOLUME -= 0.1
 
-        if char not in [' ', '\n']:
-            try:
-                image = font[str(char)][1]
-                word += char
-            except KeyError:
-                pass
-        else:
-            # длина слова(в пикселях) вместе с символами пустой строки и пропусками
-            next_word_length = sum(map(lambda s: font[s][0] + spacing, next_word(text[idx + 1:])))
+            settings_menu_manager.process_events(event)
 
-            if word != '':
-                last_sym = word[-1]
-
-            # отображаем символы по одному в положенном месте на экране
-            for sym in word:
-                image = font[sym][1]
-                screen.blit(image, (margin_x, margin_y))
-                if step_by_step:
-                    pygame.display.flip()
-                    pygame.time.wait(waiting_time)
-                margin_x += font[sym][0] + spacing
-
-            if char == ' ':
-                margin_x += space_length + spacing
-
-            word = ''
-            a = margin_x - origin_x > max_width
-            if char == '\n' and last_sym not in ['.', ','] or margin_x - origin_x > max_width:
-                margin_x = origin_x
-                margin_y += font['Height']
-
-        if margin_x - origin_x + next_word_length > max_width:
-            margin_x = origin_x
-            margin_y += font['Height']
+        settings_menu_manager.update(tick)
+        settings_menu_manager.draw_ui(screen)
+        pygame.display.flip()
+        CLOCK.tick(FPS)
 
 
 # ---- Функция показывает заставку, когда игрок начал новую игру ----
@@ -157,9 +193,10 @@ def start_screen(screen):
 
     pygame.mixer.music.stop()
 
-    screen.fill((0, 0, 0))
+    screen.blit(PLANET_img, (0, 0))
     pygame.display.flip()
     pygame.time.wait(4 * SECOND)
+    screen.fill((0, 0, 0))
 
     pygame.mixer.music.load(SIREN_SOUNDTRACK_PATH)
     pygame.mixer.music.set_volume(0.2)
@@ -190,7 +227,7 @@ def start_screen(screen):
                 pygame.mixer.music.play(-1)
 
                 render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                            space_length=5, waiting_time=80, step_by_step=True)
+                            space_length=5)
 
                 pygame.mixer.music.stop()
                 skip_pressed = True
@@ -227,8 +264,10 @@ def end_screen(screen):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == go_to_main_menu_button:
+                        pygame.mixer.music.stop()
                         return main_menu(screen)
                     if event.ui_element == start_over_button:
+                        pygame.mixer.music.stop()
                         return main_menu(screen, start_new_game=True)
 
             end_screen_manager.process_events(event)
@@ -242,8 +281,9 @@ def end_screen(screen):
 def main_menu(screen, start_new_game=False):
     screen.blit(MAIN_MENU_BACKGROUND_img, (0, 0))
 
-    pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
-    pygame.mixer.music.play(-1)
+    if not pygame.mixer.music.get_busy():
+        pygame.mixer.music.load(MAIN_MENU_SOUNDTRACK_PATH)
+        pygame.mixer.music.play(-1)
 
     if start_new_game:
         start_screen(screen)
@@ -277,7 +317,7 @@ def main_menu(screen, start_new_game=False):
 
                             return pos, ox, hp, progress
                     if event.ui_element == settings_button:
-                        pass
+                        settings_screen(screen)
                     if event.ui_element == exit_button:
                         terminate()
 

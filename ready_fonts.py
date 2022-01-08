@@ -4,6 +4,13 @@ import pygame
 from CONSTANTS import *
 
 
+def next_word(text):
+    for sym in ['.', ',', '!', '?', ' ']:
+        word = text[:text.find(sym)]
+        if ' ' not in word:
+            return word
+
+
 def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barrier=1):
     """
     Функция генерирует кастомный шрифт, нарисованный по пикселям.
@@ -41,6 +48,70 @@ def generate_custom_font(image, fnt, color, block_width=5, block_height=8, barri
     all_symbols['Height'] = block_height
 
     return all_symbols
+
+
+def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, space_length=3,
+                waiting_time=0, step_by_step=False):
+    """
+    Функция рендерит заданный текст с кастомным шрифтом.
+
+    :param text:         текст для вывода;
+    :param margin_x:     величина горизонтального отступа от левой границы холста;
+    :param margin_y:     величина вертикального отступа от верхней границы холста;
+    :param spacing:      расстояние между символами;
+    :param max_width:    максимальная длина строки(в пикселях);
+    :param font:         шрифт;
+    :param screen:       холст;
+    :param space_length: длина пробела(в пикселях);
+    :param waiting_time: продолжительность ожидания после выведения каждой буквы(в миллисекундах);
+    :param step_by_step: выводит текст букву за буквой, если установлено значение True;
+    :return:
+    """
+
+    text += ' '
+    origin_x = margin_x
+    word = ''
+    next_word_length = 0
+
+    for idx, char in enumerate(text):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                return
+
+        if char not in [' ', '\n']:
+            try:
+                image = font[str(char)][1]
+                word += char
+            except KeyError:
+                pass
+        else:
+            # длина слова(в пикселях) вместе с символами пустой строки и пропусками
+            next_word_length = sum(map(lambda s: font[s][0] + spacing, next_word(text[idx + 1:])))
+
+            if word != '':
+                last_sym = word[-1]
+
+            # отображаем символы по одному в положенном месте на экране
+            for sym in word:
+                image = font[sym][1]
+                screen.blit(image, (margin_x, margin_y))
+                if step_by_step:
+                    pygame.display.flip()
+                    pygame.time.wait(waiting_time)
+                margin_x += font[sym][0] + spacing
+
+            if char == ' ':
+                margin_x += space_length + spacing
+
+            word = ''
+            a = margin_x - origin_x > max_width
+            if char == '\n' and last_sym not in ['.', ','] or margin_x - origin_x > max_width:
+                margin_x = origin_x
+                margin_y += font['Height']
+
+        if margin_x - origin_x + next_word_length > max_width:
+            margin_x = origin_x
+            margin_y += font['Height']
 
 
 # # Словарь, содержащий все нужные символы в качестве ключей. Первый элемент массива, являющимся значением к ключу -

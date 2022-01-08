@@ -90,8 +90,8 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    from wallpapers import main_menu, render_text, end_screen
-    from ready_fonts import title_font
+    from intros_and_ui import main_menu, end_screen
+    from ready_fonts import title_font, render_text
 
     # ---- ресурсы для главного меню ----
     background = MAIN_MENU_BACKGROUND_img
@@ -157,7 +157,7 @@ def game_loop():
                     lifebar.health_lvl = hp
 
             if event.type == lifebar.oxygen_event:
-                lifebar.oxygen_lvl -= 1
+                lifebar.oxygen_lvl -= 50
 
             if event.type == player.animate_event:
                 player.update(buttons_pressed)
