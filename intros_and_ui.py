@@ -310,8 +310,8 @@ def main_menu(screen, start_new_game=False):
                         pos, ox, hp, progress, was_died = get_save()
                         if not was_died:
                             play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
-
-                            return pos, ox, hp, progress
+                            game_statistics = get_statistics()
+                            return pos, ox, hp, progress, game_statistics
                     if event.ui_element == settings_button:
                         settings_screen(screen)
                     if event.ui_element == exit_button:
