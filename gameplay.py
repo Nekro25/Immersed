@@ -1,5 +1,6 @@
 import pygame
 import sys
+from random import shuffle
 
 from CONSTANTS import *
 from picture2matrix import picture_to_matrix
@@ -219,10 +220,12 @@ def game_loop():
                     monster.update()
 
             if event.type == create_monster_event:
-                for i in [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2), (WIDTH // 2, -2),
+                coords = [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2), (WIDTH // 2, -2),
                           (WIDTH // 2, HEIGHT + 2), (WIDTH + 2, -2),
-                          (WIDTH + 2, HEIGHT // 2), (WIDTH + 2, HEIGHT + 2)]:
-                    monster = Enemy(WIDTH // 2, HEIGHT, monster_img, monster_animate_img, 5,
+                          (WIDTH + 2, HEIGHT // 2), (WIDTH + 2, HEIGHT + 2)]
+                shuffle(coords)
+                for i in coords:
+                    monster = Enemy(*i, monster_img, monster_animate_img, 5,
                                     1, monster_x, monster_y)
                     if pygame.sprite.spritecollideany(monster, barrier_group):
                         monster.kill()
