@@ -8,6 +8,8 @@ from interface import *
 from data_base import *
 from entities import *
 
+from ready_fonts import *
+
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
                    pygame.K_d: False}
 previous_bg = None
@@ -19,6 +21,7 @@ def draw_screen(screen, player, map, camera, lifebar):
     barrier = pygame.sprite.Group()
     oxygen_group = pygame.sprite.Group()
     screen_group = pygame.sprite.Group()
+    top_sprites = list()
     coef_y = -10
     for y in range(player.y - HEIGHT // BLOCK_SIZE // 2 - 10,
                    player.y + HEIGHT // BLOCK_SIZE // 2 + 10):
@@ -31,14 +34,36 @@ def draw_screen(screen, player, map, camera, lifebar):
                 elif map[x][y] == ICE:
                     barrier.add(Structure(coef_x, coef_y, ICE_img, screen_group))
                 elif map[x][y] == OXYGEN_FILLER:
-                    Structure(coef_x - 3, coef_y - 3, OXYGEN_FILLER_img, screen_group,
-                              oxygen_group)
+                    top_sprites.append(
+                        Structure(coef_x - 3, coef_y - 3, OXYGEN_FILLER_img, oxygen_group))
                     # здесь -3 тк это объект блольше чем обычный блок
                 elif map[x][y] == REACTOR:
                     Structure(coef_x - 3, coef_y - 5, REACTOR_img, screen_group,
-                              oxygen_group)
+                              oxygen_group, ship_num=5)
+                elif map[x][y] == MAIN_SHIP:
+                    top_sprites.append(
+                        Structure(coef_x - 5, coef_y - 2, MAIN_SHIP_img, oxygen_group,
+                                  ship_num=0))
+                elif map[x][y] == SHIP_1:
+                    top_sprites.append(
+                        Structure(coef_x - 4, coef_y - 2, SHIP_1_img, oxygen_group,
+                                  ship_num=1))
+                elif map[x][y] == SHIP_2:
+                    top_sprites.append(
+                        Structure(coef_x - 5, coef_y - 1, SHIP_2_img, oxygen_group,
+                                  ship_num=2))
+                elif map[x][y] == SHIP_3:
+                    top_sprites.append(
+                        Structure(coef_x - 13, coef_y - 7, SHIP_3_img, oxygen_group,
+                                  ship_num=3))
+                elif map[x][y] == SHIP_4:
+                    top_sprites.append(
+                        Structure(coef_x - 15, coef_y - 10, SHIP_4_img, oxygen_group,
+                                  ship_num=4))
             coef_x += 1
         coef_y += 1
+    for i in top_sprites:
+        screen_group.add(i)
     screen_group.add(player)
     camera.track(player)
     for obj in screen_group:
@@ -64,23 +89,23 @@ def moving(group, player):
 
 
 def check_background(player, map):
-    if map[player.x][player.y] == (ICE_bg or ICE):
+    if map[player.x][player.y - 1] == (ICE_bg or ICE):
         if previous_bg != ICE_CAVE_BG_img:
             pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
         return ICE_CAVE_BG_img
-    elif map[player.x][player.y] == WATER:
+    elif map[player.x][player.y - 1] == WATER:
         if previous_bg != BACKGROUND_img:
             pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
         return BACKGROUND_img
-    elif map[player.x][player.y] == (GROUND_bg or GROUND):
+    elif map[player.x][player.y - 1] == (GROUND_bg or GROUND):
         if previous_bg != GROUND_CAVE_BG_img:
             pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
             pygame.mixer.music.play(-1)
         return GROUND_CAVE_BG_img
     else:
-        return BACKGROUND_img
+        return previous_bg
 
 
 # Игровой цикл
@@ -101,7 +126,7 @@ def game_loop():
     # ---- ресурсы для главного меню ----
 
     # позиция игрока, количество кислорода, количество здоровья,
-    # [корабль1, корабль2, корабль3, неизвестный реактор]
+    # [корабль1, корабль2, корабль3, корабль4, неизвестный реактор]
     pos, ox, hp, progress = main_menu(screen)
 
     running = True
@@ -119,9 +144,8 @@ def game_loop():
         player.rect.y = HEIGHT // BLOCK_SIZE * BLOCK_SIZE // 2 + player.cell_y - PLAYER_SIZE // 2
         screen.blit(bg, (-player.x, -player.y))
 
-        barrier_group, screen_group, oxygen_group = draw_screen(screen, player,
-                                                                game_map, camera,
-                                                                lifebar)
+        barrier_group, screen_group, oxygen_group = draw_screen(screen, player, game_map,
+                                                                camera, lifebar)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -172,24 +196,26 @@ def game_loop():
             for button in buttons_pressed.keys():
                 buttons_pressed[button] = False
 
-        if pygame.sprite.spritecollideany(player, oxygen_group):
+        collide_obj = pygame.sprite.spritecollideany(player, oxygen_group)
+        if collide_obj:
             lifebar.oxygen_lvl = 100
+            if collide_obj.ship_num:
+                if progress[collide_obj.ship_num - 1] == 0:
+                    render_tablet(screen, render_text, medium_font,
+                                  ship_messages[collide_obj.ship_num - 1])
+                    if all(progress[:-1]) and not progress[-1]:
+                        render_tablet(screen, render_text, medium_font, PARTS_COLLECTED_text)
+                    elif all(progress):
+                        render_tablet(screen, render_text, medium_font, BATTERY_COLLECTED_text)
+                    for button in buttons_pressed.keys():
+                        buttons_pressed[button] = False
+                    progress[collide_obj.ship_num - 1] = 1
+
         moving(barrier_group, player)
 
         global previous_bg
         previous_bg = bg
         bg = check_background(player, game_map)
-
-        # if bg != previous_bg:
-        #     if bg == ICE_CAVE_BG_img:
-        #         pygame.mixer.music.load(SNOW_BIOM_SOUNDTRACK_PATH)
-        #         pygame.mixer.music.play(-1)
-        #     elif bg == GROUND_CAVE_BG_img:
-        #         pygame.mixer.music.load(CAVE_BIOM_SOUNDTRACK_PATH)
-        #         pygame.mixer.music.play(-1)
-        #     else:
-        #         pygame.mixer.music.load(DEFAULT_BIOM_SOUNDTRACK_PATH)
-        #         pygame.mixer.music.play(-1)
 
         for i in screen_group:  # оптимизация
             i.kill()
