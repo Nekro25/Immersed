@@ -87,7 +87,7 @@ BLOCK_SIZE = 50
 PLAYER_SIZE = 50
 SECOND = 1000
 create_monster_event = pygame.USEREVENT + 4
-pygame.time.set_timer(create_monster_event, SECOND * 40)
+pygame.time.set_timer(create_monster_event, SECOND)
 
 EFFECTS_VOLUME = 1.0
 MUSIC_VOLUME = 1.0

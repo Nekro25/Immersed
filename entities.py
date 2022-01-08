@@ -157,6 +157,7 @@ class Creature(pygame.sprite.Sprite):
                  bite=False, speed=400, monster=False):
         super().__init__(*args)
         self.stay_img = img
+        self.bitten = False
         self.frames = []
         self.get_frames(animation, anim_x, anim_y, anim_w, anim_h)
         self.cur_frame_num = 0
@@ -188,23 +189,6 @@ class Creature(pygame.sprite.Sprite):
         self.frames_135 = [pygame.transform.flip(i, True, False) for i in self.frames_315]
         self.frames_270 = [pygame.transform.flip(i, True, True) for i in self.frames_90]
 
-    # def get_bite_frames(self, sheet, anim_x, anim_y, anim_w, anim_h):
-    #     for i in range(anim_x):
-    #         for j in range(1, anim_y):
-    #             self.bite_frames.append(
-    #                 sheet.subsurface((anim_w * j, anim_h * i, anim_w, anim_h)))
-    #     self.bite_frames_45 = [pygame.transform.rotate(i, 45) for i in self.bite_frames]
-    #     self.bite_frames_90 = [pygame.transform.rotate(i, 90) for i in self.bite_frames]
-    #     self.bite_frames_315 = [pygame.transform.rotate(i, 315) for i in self.bite_frames]
-    #     self.bite_frames_180 = [pygame.transform.flip(i, True, False) for i in
-    #                             self.bite_frames]
-    #     self.bite_frames_225 = [pygame.transform.flip(i, True, False) for i in
-    #                             self.bite_frames_45]
-    #     self.bite_frames_135 = [pygame.transform.flip(i, True, False) for i in
-    #                             self.bite_frames_315]
-    #     self.bite_frames_270 = [pygame.transform.flip(i, True, True) for i in
-    #                             self.bite_frames_90]
-
     def update(self, dict):
         if any(dict.values()):
             if dict[pygame.K_w] and dict[pygame.K_a]:
@@ -231,28 +215,6 @@ class Creature(pygame.sprite.Sprite):
         else:
             self.image = self.stay_img
 
-    # def monster_moving(self, group, player):
-    #     if player.x < self.x:
-    #         if not self.bited:
-    #             self.move_left(group)
-    #         else:
-    #             self.move_right(group)
-    #     if player.y > self.y:
-    #         if not self.bited:
-    #             self.move_down(group)
-    #         else:
-    #             self.move_up(group)
-    #     if player.x > self.x:
-    #         if not self.bited:
-    #             self.move_right(group)
-    #         else:
-    #             self.move_left(group)
-    #     if player.y < self.y:
-    #         if not self.bited:
-    #             self.move_up(group)
-    #         else:
-    #             self.move_down(group)
-
     # движение игрока в пространстве
     def move_up(self, group, monster):
         self.map_y -= self.speed / FPS
@@ -267,7 +229,7 @@ class Creature(pygame.sprite.Sprite):
         if monster:
             monster.rect.y += self.speed // FPS + 1
             if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.y -= self.speed // FPS + 1
+                monster.rect.y -= self.speed // FPS + 2
 
     def move_down(self, group, monster):
         self.map_y += self.speed / FPS
@@ -282,7 +244,7 @@ class Creature(pygame.sprite.Sprite):
         if monster:
             monster.rect.y -= self.speed // FPS + 1
             if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.y += self.speed // FPS + 1
+                monster.rect.y += self.speed // FPS + 2
 
     def move_left(self, group, monster):
         self.map_x -= self.speed / FPS
@@ -297,7 +259,7 @@ class Creature(pygame.sprite.Sprite):
         if monster:
             monster.rect.x += self.speed // FPS + 1
             if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.x -= self.speed // FPS + 1
+                monster.rect.x -= self.speed // FPS + 2
 
     def move_right(self, group, monster):
         self.map_x += self.speed / FPS
@@ -312,7 +274,7 @@ class Creature(pygame.sprite.Sprite):
         if monster:
             monster.rect.x -= self.speed // FPS + 1
             if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.x += self.speed // FPS + 1
+                monster.rect.x += self.speed // FPS + 2
 
 
 class Structure(pygame.sprite.Sprite):
