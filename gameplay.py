@@ -8,7 +8,7 @@ from picture2matrix import picture_to_matrix
 from interface import *
 from data_base import *
 from entities import *
-from sounds_and_music import play_music
+import sounds_and_music
 from ready_fonts import *
 
 buttons_pressed = {pygame.K_w: False, pygame.K_a: False, pygame.K_s: False,
@@ -114,7 +114,8 @@ def check_background(player, map):
     global monster_img, monster_animate_img, monster_x, monster_y, monster_sound
     if map[player.x][player.y - 1] == (ICE_bg or ICE):
         if previous_bg != ICE_CAVE_BG_img:
-            play_music(SNOW_BIOM_SOUNDTRACK_PATH, -1)
+            sounds_and_music.CURRENT_MUSIC = SNOW_BIOM_SOUNDTRACK_PATH
+            sounds_and_music.play_music(SNOW_BIOM_SOUNDTRACK_PATH, -1)
             monster_img = JELLYFISH_img
             monster_sound = JELLY_SOUND
             monster_animate_img = JELLYFISH_ANIMATION_img
@@ -128,11 +129,13 @@ def check_background(player, map):
             monster_animate_img = PURPLE_SHARK_ANIMATION_img
             monster_x = 120
             monster_y = 51
-            play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
+            sounds_and_music.CURRENT_MUSIC = DEFAULT_BIOM_SOUNDTRACK_PATH
+            sounds_and_music.play_music(DEFAULT_BIOM_SOUNDTRACK_PATH, -1)
         return BACKGROUND_img
     elif map[player.x][player.y - 1] == (GROUND_bg or GROUND):
         if previous_bg != GROUND_CAVE_BG_img:
-            play_music(CAVE_BIOM_SOUNDTRACK_PATH, -1)
+            sounds_and_music.CURRENT_MUSIC = CAVE_BIOM_SOUNDTRACK_PATH
+            sounds_and_music.play_music(CAVE_BIOM_SOUNDTRACK_PATH, -1)
             monster_img = BABY_CTULHU_img
             monster_sound = CTHULHU_SOUND
             monster_animate_img = BABY_CTULHU_ANIMATION_img

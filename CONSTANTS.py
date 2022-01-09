@@ -33,19 +33,6 @@ def terminate():
     sys.exit()
 
 
-def play_music(*args):
-    from data_base import get_music_volume
-
-    pygame.mixer.music.load(args[0])
-    if len(args) > 1:
-        pygame.mixer.music.play(args[1])
-    else:
-        pygame.mixer.music.play()
-    pygame.mixer.music.set_volume(get_music_volume())
-
-
-
-
 WATER = 0
 GROUND = 1
 ICE = 2

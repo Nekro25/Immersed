@@ -1,6 +1,6 @@
 import pygame
 from data_base import get_music_volume
-from CONSTANTS import BUTTON_SOUND, SHARK_SOUND, JELLY_SOUND, CTHULHU_SOUND, TABLET_SOUND
+from CONSTANTS import BUTTON_SOUND, SHARK_SOUND, JELLY_SOUND, CTHULHU_SOUND, TABLET_SOUND, DEFAULT_BIOM_SOUNDTRACK_PATH
 
 
 def play_music(*args, fade_ms=0):
@@ -15,3 +15,6 @@ def play_music(*args, fade_ms=0):
 def set_volume_for_effects(volume):
     for sound_elem in [BUTTON_SOUND, SHARK_SOUND, JELLY_SOUND, CTHULHU_SOUND, TABLET_SOUND]:
         sound_elem.set_volume(volume)
+
+
+CURRENT_MUSIC = DEFAULT_BIOM_SOUNDTRACK_PATH
