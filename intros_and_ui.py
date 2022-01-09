@@ -4,8 +4,7 @@ import pygame_gui as gui
 from CONSTANTS import *
 from data_base import *
 from ready_fonts import *
-from sounds_and_music import play_music, set_volume_for_effects
-import sounds_and_music
+from sounds_and_music import *
 
 # создаем менеджеры для контроля кнопок на разных экранах(настройки, главное меню и тд)
 main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
@@ -335,7 +334,7 @@ def start_screen(screen):
     pygame.time.wait(4 * SECOND)
     screen.fill((0, 0, 0))
 
-    play_music(SIREN_SOUNDTRACK_PATH, fade_ms=4 * SECOND)
+    play_music(SIREN_SOUNDTRACK_PATH, 1, fade_ms=4 * SECOND)
 
     while True:
         for event in pygame.event.get():
@@ -442,7 +441,7 @@ def main_menu(screen, start_new_game=False):
                     if event.ui_element == continue_button:
                         pos, ox, hp, progress, was_died = get_save()
                         if not was_died:
-                            play_music(sounds_and_music.CURRENT_MUSIC, -1)
+                            play_music()
                             game_statistics = get_statistics()
                             return pos, ox, hp, progress, game_statistics
                     if event.ui_element == settings_button:
