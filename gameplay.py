@@ -261,7 +261,7 @@ def game_loop():
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
             new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
                      1, game_statistics)
-            pos, ox, hp, progress = death_screen(screen)
+            pos, ox, hp, progress, game_statistics = death_screen(screen)
             player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
             lifebar.oxygen_lvl = ox
             lifebar.health_lvl = hp
