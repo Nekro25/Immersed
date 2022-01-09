@@ -77,7 +77,6 @@ def render_text(text, margin_x, margin_y, spacing, max_width, font, screen, spac
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 return
-
         if char not in [' ', '\n']:
             try:
                 image = font[str(char)][1]

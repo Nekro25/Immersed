@@ -146,7 +146,7 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    from intros_and_ui import main_menu, end_screen, win_screen
+    from intros_and_ui import main_menu, death_screen, win_screen, stat_screen
     from ready_fonts import title_font, render_text
 
     # ---- ресурсы для главного меню ----
@@ -251,7 +251,7 @@ def game_loop():
         if lifebar.health_lvl < 0 or lifebar.oxygen_lvl < 0:
             new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl, progress,
                      1, game_statistics)
-            pos, ox, hp, progress = end_screen(screen)
+            pos, ox, hp, progress = death_screen(screen)
             player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
             lifebar.oxygen_lvl = ox
             lifebar.health_lvl = hp
@@ -281,8 +281,7 @@ def game_loop():
                 if all(progress):
                     win_screen(screen)
                 elif all(progress[:-1]) and not progress[-1]:
-                    # плохая концовка
-                    pass
+                    stat_screen(screen)
         # проверка н укус
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:

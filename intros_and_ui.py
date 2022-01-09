@@ -168,13 +168,13 @@ def settings_screen(screen):
                         if get_effects_volume() < 1.0:
                             set_effects_volume(0.1)
                     if event.ui_element == turn_down_effects_volume:
-                        if get_effects_volume() > 0:
+                        if get_effects_volume() > 0.1:
                             set_effects_volume(-0.1)
                     if event.ui_element == turn_up_music_volume:
                         if get_music_volume() < 1.0:
                             set_music_volume(0.1)
                     if event.ui_element == turn_down_music_volume:
-                        if get_music_volume() > 0:
+                        if get_music_volume() > 0.1:
                             set_music_volume(-0.1)
                     BUTTON_SOUND.set_volume(get_effects_volume())
                     pygame.mixer.music.set_volume(get_music_volume())
@@ -198,7 +198,6 @@ def win_screen(screen):
                     """ \
             "Отличная работа! Теперь вы можете возвращаться домой. Счастливого пути!"
 
-    skip_pressed = False
 
     pygame.mixer.music.stop()
 
@@ -215,15 +214,42 @@ def win_screen(screen):
                 terminate()
             elif event.type == pygame.KEYDOWN:
                 pygame.mixer.music.stop()
+                stat_screen(screen)
                 return
 
         render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
                     space_length=5, step_by_step=True, waiting_time=60)
-
-        if skip_pressed:
-            return
+        pygame.mixer.music.stop()
 
         pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
+def stat_screen(screen):
+    statistic_word = "Статистика"
+    total_stats = get_statistics()
+    info_text = [f"Пройдено метров:  {total_stats['steps']}", f"Пережито монстров:  {total_stats['monsters']}",
+                 f"Время прохождения:  {total_stats['time']}", f"Укусов получено:  {total_stats['bites']}"]
+
+    pygame.mixer.music.stop()
+
+    screen.blit(PLANET_img, (0, 0))
+    screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+    render_text(statistic_word, WIDTH / 2 - 150, HEIGHT / 2 - 170, 30, 1000, title_font, screen)
+
+    for num, text in enumerate(info_text):
+        render_text(text, WIDTH / 2 - 130, HEIGHT / 2 + num * 50, 12, 600, medium_font, screen, space_length=5)
+
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                pygame.mixer.music.stop()
+                return
+
         CLOCK.tick(FPS)
 
 
@@ -291,7 +317,7 @@ def start_screen(screen):
         CLOCK.tick(FPS)
 
 
-def end_screen(screen):
+def death_screen(screen):
     end_text = "Вы умерли!"
 
     background = END_SCREEN_BACKGROUND_img
