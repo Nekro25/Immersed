@@ -1,5 +1,6 @@
 import pygame
 from CONSTANTS import *
+from sounds_and_music import play_music
 
 
 class LifeBar(pygame.sprite.Sprite):
@@ -34,7 +35,18 @@ class LifeBar(pygame.sprite.Sprite):
 
 
 def render_tablet(screen, render_text, medium_font, text):
+    skip_pressed = False
     screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
-    render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600,
-                medium_font, screen, space_length=5, waiting_time=80,
-                step_by_step=True)
+    play_music(BEEP_SOUNDTRACK_PATH, -1)
+    skip_pressed = render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 550,
+                               medium_font, screen, space_length=5, waiting_time=80,
+                               step_by_step=True)
+    pygame.mixer.music.stop()
+    if skip_pressed:
+        return
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            if event.type == pygame.KEYDOWN:
+                return

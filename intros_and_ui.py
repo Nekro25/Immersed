@@ -298,7 +298,7 @@ def statistics_screen(screen):
     render_text(statistic_word, WIDTH / 2 - 150, HEIGHT / 2 - 170, 30, 1000, title_font, screen)
 
     for num, text in enumerate(info_text):
-        render_text(text, WIDTH / 2 - 130, HEIGHT / 2 + num * 50, 12, 600, medium_font, screen, space_length=5)
+        render_text(text, WIDTH / 2 - 150, HEIGHT / 2 + num * 50, 12, 600, medium_font, screen, space_length=5)
 
     pygame.display.flip()
 
@@ -311,6 +311,7 @@ def statistics_screen(screen):
                 return
 
         CLOCK.tick(FPS)
+
 
 # ---- Функция показывает заставку, когда игрок начал новую игру ----
 def start_screen(screen):
