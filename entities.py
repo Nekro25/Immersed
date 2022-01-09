@@ -132,23 +132,31 @@ class Enemy(pygame.sprite.Sprite):
                 self.move_down(group)
 
     def move_up(self, group):
-        self.rect.y -= self.speed // FPS
+        self.rect.y -= self.speed // FPS * 2
         if pygame.sprite.spritecollideany(self, group):
+            self.rect.y += self.speed // FPS * 2 + 5
+        else:
             self.rect.y += self.speed // FPS
 
     def move_down(self, group):
-        self.rect.y += self.speed // FPS
+        self.rect.y += self.speed // FPS * 2
         if pygame.sprite.spritecollideany(self, group):
+            self.rect.y -= self.speed // FPS * 2 + 5
+        else:
             self.rect.y -= self.speed // FPS
 
     def move_left(self, group):
-        self.rect.x -= self.speed // FPS
+        self.rect.x -= self.speed // FPS * 2
         if pygame.sprite.spritecollideany(self, group):
+            self.rect.x += self.speed // FPS * 2 + 5
+        else:
             self.rect.x += self.speed // FPS
 
     def move_right(self, group):
-        self.rect.x += self.speed // FPS
+        self.rect.x += self.speed // FPS * 2
         if pygame.sprite.spritecollideany(self, group):
+            self.rect.x -= self.speed // FPS * 2 + 5
+        else:
             self.rect.x -= self.speed // FPS
 
 
@@ -227,9 +235,7 @@ class Creature(pygame.sprite.Sprite):
         self.y = int(self.map_y) // BLOCK_SIZE
         self.cell_y = int(self.map_y) % BLOCK_SIZE
         if monster:
-            monster.rect.y += self.speed // FPS + 1
-            if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.y -= self.speed // FPS + 2
+            monster.move_down(group)
 
     def move_down(self, group, monster):
         self.map_y += self.speed / FPS
@@ -242,9 +248,7 @@ class Creature(pygame.sprite.Sprite):
         self.y = int(self.map_y) // BLOCK_SIZE
         self.cell_y = int(self.map_y) % BLOCK_SIZE
         if monster:
-            monster.rect.y -= self.speed // FPS + 1
-            if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.y += self.speed // FPS + 2
+            monster.move_up(group)
 
     def move_left(self, group, monster):
         self.map_x -= self.speed / FPS
@@ -257,9 +261,7 @@ class Creature(pygame.sprite.Sprite):
         self.x = int(self.map_x) // BLOCK_SIZE
         self.cell_x = int(self.map_x) % BLOCK_SIZE
         if monster:
-            monster.rect.x += self.speed // FPS + 1
-            if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.x -= self.speed // FPS + 2
+            monster.move_right(group)
 
     def move_right(self, group, monster):
         self.map_x += self.speed / FPS
@@ -272,9 +274,7 @@ class Creature(pygame.sprite.Sprite):
         self.x = int(self.map_x) // BLOCK_SIZE
         self.cell_x = int(self.map_x) % BLOCK_SIZE
         if monster:
-            monster.rect.x -= self.speed // FPS + 1
-            if pygame.sprite.spritecollideany(monster, group):
-                monster.rect.x += self.speed // FPS + 2
+            monster.move_left(group)
 
 
 class Structure(pygame.sprite.Sprite):

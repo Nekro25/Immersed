@@ -236,7 +236,7 @@ def game_loop():
                     monster.update()
             # спавн существ через промежуток времени
             if event.type == create_monster_event:
-                if monster_respawn_time == 40:
+                if monster_respawn_time == 30:
                     monster_respawn_time = 0
                     coords = [(-2, -2), (-2, HEIGHT // 2), (-2, HEIGHT + 2),
                               (WIDTH // 2, -2),
