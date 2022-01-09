@@ -287,8 +287,8 @@ def lose_screen(screen):
 def statistics_screen(screen):
     statistic_word = "Статистика"
     total_stats = get_statistics()
-    info_text = [f"Пройдено метров:  {total_stats['steps']}", f"Пережито монстров:  {total_stats['monsters']}",
-                 f"Время прохождения:  {total_stats['time']}", f"Укусов получено:  {total_stats['bites']}"]
+    info_text = [f"Пройдено метров:  {total_stats['steps'] // 8}", f"Пережито монстров:  {total_stats['monsters']}",
+                 f"Время прохождения:  {total_stats['time']} сек", f"Укусов получено:  {total_stats['bites']}"]
 
     pygame.mixer.music.stop()
 
