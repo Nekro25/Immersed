@@ -166,19 +166,19 @@ def settings_screen(screen):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == turn_up_effects_volume:
-                        if get_effects_volume() < 0.9:
+                        if get_effects_volume() < 1:
                             set_effects_volume(0.1)
                     if event.ui_element == turn_down_effects_volume:
                         if get_effects_volume() > 0.1:
                             set_effects_volume(-0.1)
                     if event.ui_element == turn_up_music_volume:
-                        if get_music_volume() < 0.9:
+                        if get_music_volume() < 1:
                             set_music_volume(0.1)
                     if event.ui_element == turn_down_music_volume:
                         if get_music_volume() > 0:
                             set_music_volume(-0.1)
 
-                    BUTTON_SOUND.set_volume(get_effects_volume())
+                    pygame.mixer.music.set_volume(get_music_volume())
                     set_volume_for_effects(get_effects_volume())
 
             settings_menu_manager.process_events(event)
@@ -193,14 +193,15 @@ def win_screen(screen):
     text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
                     """ \
            "...Но вот досада! Слой льда перед вами слишком толстый и просто так его не пробить, " \
-           """активируйте щиты!
-""" \
+           "активируйте щиты!           " \
            "...Отлично! Еле-еле, но лед вы все таки пробили. Теперь, вероятно, вы уже знаете, что если бы не добыли " \
            """батарейку из реактора, то вскоре замерзли бы насмерть.
                    """ \
            "Отличная работа! Теперь вы можете возвращаться домой. Счастливого пути!"
 
     pygame.mixer.music.stop()
+
+    skip_pressed = False
 
     screen.blit(PLANET_img, (0, 0))
     screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
@@ -218,9 +219,12 @@ def win_screen(screen):
                 statistics_screen(screen)
                 return
 
-        render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                    space_length=5, step_by_step=True, waiting_time=60)
+        skip_pressed = render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                                   space_length=5, step_by_step=True, waiting_time=60)
         pygame.mixer.music.stop()
+
+        if skip_pressed:
+            return
 
         pygame.display.flip()
         CLOCK.tick(FPS)
@@ -235,9 +239,12 @@ def lose_screen(screen):
            "...Плохие новости..... Энергия на исходе, а вы пробили только половину слоя льда. Теперь, вероятно, " \
            "вы поняли, зачем нужна батарейка из реактора. Если бы вы ее взяли, то смогли бы преодолеть это " \
            "препятствие и не замерзнуть.                             " \
-           "Теперь вам поможет только чудо..."
+           "Теперь вам поможет только чудо...  Должно быть, вы уже чувствуете как отмерзают ваши конечности - " \
+           "этот процесс уже необратим..."
 
     pygame.mixer.music.stop()
+
+    skip_pressed = False
 
     screen.blit(PLANET_img, (0, 0))
     screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
@@ -255,9 +262,12 @@ def lose_screen(screen):
                 statistics_screen(screen)
                 return
 
-        render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                    space_length=5)
+        skip_pressed = render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                                   space_length=5, step_by_step=True, waiting_time=60)
         pygame.mixer.music.stop()
+
+        if skip_pressed:
+            return
 
         pygame.display.flip()
         CLOCK.tick(FPS)
@@ -273,6 +283,7 @@ def statistics_screen(screen):
 
     screen.blit(PLANET_img, (0, 0))
     screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+    render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
     render_text(statistic_word, WIDTH / 2 - 150, HEIGHT / 2 - 170, 30, 1000, title_font, screen)
 
     for num, text in enumerate(info_text):
@@ -323,7 +334,7 @@ def start_screen(screen):
                 return
 
         if show_preview:
-            render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
+            render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 + 286, 8, 800, small_font, screen, space_length=3)
             pygame.display.flip()
             if idx <= 88:
                 screen.blit(list_of_darkened_frames[idx % 23], (WIDTH / 2 - 350, HEIGHT / 2 - 245))
@@ -337,8 +348,8 @@ def start_screen(screen):
 
                 play_music(BEEP_SOUNDTRACK_PATH, -1)
 
-                render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
-                            space_length=5, step_by_step=True, waiting_time=60)
+                skip_pressed = render_text(intro_text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                                           space_length=5, step_by_step=True, waiting_time=60)
 
                 pygame.mixer.music.stop()
 
