@@ -287,13 +287,40 @@ def game_loop():
                                       BATTERY_COLLECTED_text)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
+            # проверка победы
             elif collide_obj.ship_num == 0 and not winning:
                 if all(progress):
+                    save_statistics(game_statistics)
+                    TABLET_SOUND.play()
                     win_screen(screen)
                     winning = True
+
+                    new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
+                             progress, 1, game_statistics)
+                    for button in buttons_pressed.keys():
+                        buttons_pressed[button] = False
+                    play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
+                    pos, ox, hp, progress, game_statistics = main_menu(screen)
+                    player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
+                    lifebar.oxygen_lvl = ox
+                    lifebar.health_lvl = hp
+
                 elif all(progress[:-1]) and not progress[-1]:
+                    save_statistics(game_statistics)
+                    TABLET_SOUND.play()
                     lose_screen(screen)
                     winning = True
+
+                    new_save(player.y, player.x, lifebar.oxygen_lvl, lifebar.health_lvl,
+                             progress, 1, game_statistics)
+                    for button in buttons_pressed.keys():
+                        buttons_pressed[button] = False
+                    play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
+                    pos, ox, hp, progress, game_statistics = main_menu(screen)
+                    player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
+                    lifebar.oxygen_lvl = ox
+                    lifebar.health_lvl = hp
+
         # проверка на укус
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:
