@@ -288,11 +288,12 @@ def game_loop():
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
             elif collide_obj.ship_num == 0 and not winning:
-                winning = True
                 if all(progress):
                     win_screen(screen)
+                    winning = True
                 elif all(progress[:-1]) and not progress[-1]:
                     lose_screen(screen)
+                    winning = True
         # проверка на укус
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:
