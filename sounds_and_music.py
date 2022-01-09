@@ -1,5 +1,6 @@
 import pygame
 from data_base import get_music_volume
+from CONSTANTS import BUTTON_SOUND, SHARK_SOUND, JELLY_SOUND, CTHULHU_SOUND, TABLET_SOUND
 
 
 def play_music(*args, fade_ms=0):
@@ -9,3 +10,8 @@ def play_music(*args, fade_ms=0):
     else:
         pygame.mixer.music.play(fade_ms)
     pygame.mixer.music.set_volume(get_music_volume())
+
+
+def set_volume_for_effects(volume):
+    for sound_elem in [BUTTON_SOUND, SHARK_SOUND, JELLY_SOUND, CTHULHU_SOUND, TABLET_SOUND]:
+        sound_elem.set_volume(volume)
