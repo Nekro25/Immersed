@@ -187,10 +187,10 @@ DISPLAY_FRAMES = [load_image('Display_images/darkened_display_1.png'),
                   ]
 
 BUTTON_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
-SHARK_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
-JELLY_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
-CTHULHU_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
-TABLET_SOUND = pygame.mixer.Sound("data/SFX/button_pressing_sound.wav")
+SHARK_SOUND = pygame.mixer.Sound("data/SFX/shark_sound.wav")
+JELLY_SOUND = pygame.mixer.Sound("data/SFX/jelly_sound.wav")
+CTHULHU_SOUND = pygame.mixer.Sound("data/SFX/cthulhu_sound.wav")
+TABLET_SOUND = pygame.mixer.Sound("data/SFX/tablet_sound.wav")
 
 MAIN_MENU_SOUNDTRACK_PATH = 'data/SFX/menu_soundtrack.mp3'
 DEFAULT_BIOM_SOUNDTRACK_PATH = 'data/SFX/default_biom_soundtrack.mp3'
