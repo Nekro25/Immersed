@@ -19,6 +19,7 @@ monster_img = PURPLE_SHARK_img
 monster_animate_img = PURPLE_SHARK_ANIMATION_img
 monster_x = 121
 monster_y = 51
+monster_sound = SHARK_SOUND
 
 winning = False
 
@@ -171,7 +172,6 @@ def game_loop():
     camera = Camera()
     player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
     lifebar = LifeBar(ox, hp)
-    monster_sound = SHARK_SOUND
     monster = None
     monster_img = PURPLE_SHARK_img
     monster_animate_img = PURPLE_SHARK_ANIMATION_img

@@ -6,6 +6,7 @@ from data_base import *
 from ready_fonts import *
 from sounds_and_music import play_music, set_volume_for_effects
 
+# создаем менеджеры для контроля кнопок на разных экранах(настройки, главное меню и тд)
 main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 end_screen_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 settings_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
@@ -126,20 +127,24 @@ turn_up_effects_volume = gui.elements.UIButton(
 # ---- кнопки в настройках ----
 
 
+# функция показывает меню настроек
 def settings_screen(screen):
     screen.blit(CROPPED_PLANET_img, (0, 0))
+    # выводит надписи
     render_text("Громкость музыки", (WIDTH - 232) / 2, VOLUME_CONTROL_BUTTON_Y_MARGIN - 50,
                 12, 600, medium_font, screen, space_length=5)
     render_text("Громкость эффектов", (WIDTH - 262) / 2, VOLUME_CONTROL_BUTTON_Y_MARGIN + 100,
                 12, 600, medium_font, screen, space_length=5)
 
     while True:
+        # счетчики для удобства использования цикла
         count_for_music = get_music_volume() * 10
         count_for_effects = get_effects_volume() * 10
 
         music_dash_color = (255, 255, 255)
         effects_dash_color = (255, 255, 255)
 
+        # рисуем черточки, показывающие уровни громкости музыки и эффектов
         for i in range(1, 11):
             if i > count_for_music:
                 music_dash_color = (127, 127, 127)
@@ -163,6 +168,7 @@ def settings_screen(screen):
                 if event.key == pygame.K_ESCAPE:
                     return
             if event.type == pygame.USEREVENT:
+                # увеличиваем или уменьшаем громкость в зависимости от нажатой кнопки
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == turn_up_effects_volume:
@@ -189,6 +195,7 @@ def settings_screen(screen):
         CLOCK.tick(FPS)
 
 
+# функция отображает победный экран в случае прохождения игры с хорошей концовкой
 def win_screen(screen):
     text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
                     """ \
@@ -224,12 +231,14 @@ def win_screen(screen):
         pygame.mixer.music.stop()
 
         if skip_pressed:
+            statistics_screen(screen)
             return
 
         pygame.display.flip()
         CLOCK.tick(FPS)
 
 
+# функция отображает экран поражения в случае прохождения игры с плохой концовкой
 def lose_screen(screen):
     text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
                     """ \
@@ -267,12 +276,14 @@ def lose_screen(screen):
         pygame.mixer.music.stop()
 
         if skip_pressed:
+            statistics_screen(screen)
             return
 
         pygame.display.flip()
         CLOCK.tick(FPS)
 
 
+# функция отображает статистику после окончания игры
 def statistics_screen(screen):
     statistic_word = "Статистика"
     total_stats = get_statistics()
@@ -300,7 +311,6 @@ def statistics_screen(screen):
                 return
 
         CLOCK.tick(FPS)
-
 
 # ---- Функция показывает заставку, когда игрок начал новую игру ----
 def start_screen(screen):
@@ -366,6 +376,7 @@ def start_screen(screen):
         CLOCK.tick(FPS)
 
 
+# отображает соответствующий  экран в случае смерти персонажа
 def death_screen(screen):
     end_text = "Вы умерли!"
 
@@ -398,6 +409,7 @@ def death_screen(screen):
         CLOCK.tick(FPS)
 
 
+# отображает экран главного меню
 def main_menu(screen, start_new_game=False):
     if not pygame.mixer.music.get_busy():
         play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
