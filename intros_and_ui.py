@@ -175,7 +175,7 @@ def settings_screen(screen):
                         if get_music_volume() < 0.9:
                             set_music_volume(0.1)
                     if event.ui_element == turn_down_music_volume:
-                        if get_music_volume() > 0.1:
+                        if get_music_volume() > 0:
                             set_music_volume(-0.1)
 
                     BUTTON_SOUND.set_volume(get_effects_volume())
