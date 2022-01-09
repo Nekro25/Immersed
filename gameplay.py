@@ -330,7 +330,7 @@ def game_loop():
                 monster_sound.play()
                 monster.bited = True
                 game_statistics['bites'] += 1
-                lifebar.health_lvl -= 10
+                lifebar.health_lvl -= 20
                 player.bitten = True
 
         moving(barrier_group, player, monster)
