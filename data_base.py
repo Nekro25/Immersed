@@ -31,7 +31,7 @@ def get_save():  # получить сохраненные данные
 
 
 def get_music_volume():
-    return CURSOR.execute("""SELECT music_volume FROM progress""").fetchone()[0]
+    return round(CURSOR.execute("""SELECT music_volume FROM progress""").fetchone()[0], 1)
 
 
 def get_effects_volume():
