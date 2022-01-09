@@ -4,12 +4,11 @@ import pygame_gui as gui
 from CONSTANTS import *
 from data_base import *
 from ready_fonts import *
-from sounds_and_music import play_music
+from sounds_and_music import play_music, set_volume_for_effects
 
 main_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 end_screen_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
 settings_menu_manager = gui.UIManager((WIDTH, HEIGHT), 'theme.json')
-
 
 # ---- кнопки в главном меню ----
 new_game_button = gui.elements.UIButton(
@@ -122,6 +121,8 @@ turn_up_effects_volume = gui.elements.UIButton(
     object_id=gui.core.ObjectID(class_id='@settings_screen',
                                 object_id='#settings_buttons')
 )
+
+
 # ---- кнопки в настройках ----
 
 
@@ -165,19 +166,20 @@ def settings_screen(screen):
                 if event.user_type == gui.UI_BUTTON_PRESSED:
                     BUTTON_SOUND.play()
                     if event.ui_element == turn_up_effects_volume:
-                        if get_effects_volume() < 1.0:
+                        if get_effects_volume() < 0.9:
                             set_effects_volume(0.1)
                     if event.ui_element == turn_down_effects_volume:
                         if get_effects_volume() > 0.1:
                             set_effects_volume(-0.1)
                     if event.ui_element == turn_up_music_volume:
-                        if get_music_volume() < 1.0:
+                        if get_music_volume() < 0.9:
                             set_music_volume(0.1)
                     if event.ui_element == turn_down_music_volume:
                         if get_music_volume() > 0.1:
                             set_music_volume(-0.1)
+
                     BUTTON_SOUND.set_volume(get_effects_volume())
-                    pygame.mixer.music.set_volume(get_music_volume())
+                    set_volume_for_effects(get_effects_volume())
 
             settings_menu_manager.process_events(event)
 
@@ -190,14 +192,13 @@ def settings_screen(screen):
 def win_screen(screen):
     text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
                     """ \
-            "...Но вот досада! Слой льда перед вами слишком толстый и просто так его не пробить, " \
-            """активируйте щиты!
- """ \
+           "...Но вот досада! Слой льда перед вами слишком толстый и просто так его не пробить, " \
+           """активируйте щиты!
+""" \
            "...Отлично! Еле-еле, но лед вы все таки пробили. Теперь, вероятно, вы уже знаете, что если бы не добыли " \
-            """батарейку из реактора, то вскоре замерзли бы насмерть.
-                    """ \
-            "Отличная работа! Теперь вы можете возвращаться домой. Счастливого пути!"
-
+           """батарейку из реактора, то вскоре замерзли бы насмерть.
+                   """ \
+           "Отличная работа! Теперь вы можете возвращаться домой. Счастливого пути!"
 
     pygame.mixer.music.stop()
 
@@ -214,7 +215,7 @@ def win_screen(screen):
                 terminate()
             elif event.type == pygame.KEYDOWN:
                 pygame.mixer.music.stop()
-                stat_screen(screen)
+                statistics_screen(screen)
                 return
 
         render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
@@ -225,7 +226,44 @@ def win_screen(screen):
         CLOCK.tick(FPS)
 
 
-def stat_screen(screen):
+def lose_screen(screen):
+    text = """Ваши старания прошли не зря! Корабль наконец-то отремонтирован и вы можете взлетать с планеты.
+                    """ \
+           "...Но вот досада! Слой льда перед вами слишком толстый и просто так его не пробить, " \
+           """активируйте щиты!
+  """ \
+           "...Плохие новости..... Энергия на исходе, а вы пробили только половину слоя льда. Теперь, вероятно, " \
+           "вы поняли, зачем нужна батарейка из реактора. Если бы вы ее взяли, то смогли бы преодолеть это " \
+           "препятствие и не замерзнуть.                             " \
+           "Теперь вам поможет только чудо..."
+
+    pygame.mixer.music.stop()
+
+    screen.blit(PLANET_img, (0, 0))
+    screen.blit(EMPTY_DISPLAY_img, (WIDTH / 2 - 350, HEIGHT / 2 - 245))
+    render_text(COMMAND_text, WIDTH / 2 - 300, HEIGHT / 2 - 286, 8, 800, small_font, screen, space_length=3)
+    pygame.display.flip()
+
+    play_music(BEEP_SOUNDTRACK_PATH, -1)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                pygame.mixer.music.stop()
+                statistics_screen(screen)
+                return
+
+        render_text(text, WIDTH / 2 - 293, HEIGHT / 2 - 184, 12, 600, medium_font, screen,
+                    space_length=5)
+        pygame.mixer.music.stop()
+
+        pygame.display.flip()
+        CLOCK.tick(FPS)
+
+
+def statistics_screen(screen):
     statistic_word = "Статистика"
     total_stats = get_statistics()
     info_text = [f"Пройдено метров:  {total_stats['steps']}", f"Пережито монстров:  {total_stats['monsters']}",
@@ -350,7 +388,6 @@ def death_screen(screen):
 
 
 def main_menu(screen, start_new_game=False):
-
     if not pygame.mixer.music.get_busy():
         play_music(MAIN_MENU_SOUNDTRACK_PATH, -1)
 

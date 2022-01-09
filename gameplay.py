@@ -110,11 +110,12 @@ def moving(group, player, monster):
 
 
 def check_background(player, map):
-    global monster_img, monster_animate_img, monster_x, monster_y
+    global monster_img, monster_animate_img, monster_x, monster_y, monster_sound
     if map[player.x][player.y - 1] == (ICE_bg or ICE):
         if previous_bg != ICE_CAVE_BG_img:
             play_music(SNOW_BIOM_SOUNDTRACK_PATH, -1)
             monster_img = JELLYFISH_img
+            monster_sound = JELLY_SOUND
             monster_animate_img = JELLYFISH_ANIMATION_img
             monster_x = 63
             monster_y = 52
@@ -122,6 +123,7 @@ def check_background(player, map):
     elif map[player.x][player.y - 1] == WATER:
         if previous_bg != BACKGROUND_img:
             monster_img = PURPLE_SHARK_img
+            monster_sound = SHARK_SOUND
             monster_animate_img = PURPLE_SHARK_ANIMATION_img
             monster_x = 120
             monster_y = 51
@@ -131,6 +133,7 @@ def check_background(player, map):
         if previous_bg != GROUND_CAVE_BG_img:
             play_music(CAVE_BIOM_SOUNDTRACK_PATH, -1)
             monster_img = BABY_CTULHU_img
+            monster_sound = CTHULHU_SOUND
             monster_animate_img = BABY_CTULHU_ANIMATION_img
             monster_x = 82
             monster_y = 74
@@ -148,7 +151,7 @@ def game_loop():
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    from intros_and_ui import main_menu, death_screen, win_screen, stat_screen
+    from intros_and_ui import main_menu, death_screen, win_screen, statistics_screen, lose_screen
     from ready_fonts import title_font, render_text
 
     # ---- ресурсы для главного меню ----
@@ -168,6 +171,7 @@ def game_loop():
     camera = Camera()
     player = Creature(*pos, PLAYER_img, PLAYER_ANIMATION_img, 5, 1, 50, 50)
     lifebar = LifeBar(ox, hp)
+    monster_sound = SHARK_SOUND
     monster = None
     monster_img = PURPLE_SHARK_img
     monster_animate_img = PURPLE_SHARK_ANIMATION_img
@@ -270,12 +274,15 @@ def game_loop():
             if collide_obj.ship_num:
                 if progress[collide_obj.ship_num - 1] == 0:
                     progress[collide_obj.ship_num - 1] = 1
+                    TABLET_SOUND.play()
                     render_tablet(screen, render_text, medium_font,
                                   ship_messages[collide_obj.ship_num - 1])
                     if all(progress[:-1]) and not progress[-1]:
+                        TABLET_SOUND.play()
                         render_tablet(screen, render_text, medium_font,
                                       PARTS_COLLECTED_text)
                     elif all(progress):
+                        TABLET_SOUND.play()
                         render_tablet(screen, render_text, medium_font,
                                       BATTERY_COLLECTED_text)
                     for button in buttons_pressed.keys():
@@ -285,10 +292,11 @@ def game_loop():
                 if all(progress):
                     win_screen(screen)
                 elif all(progress[:-1]) and not progress[-1]:
-                    stat_screen(screen)
-        # проверка н укус
+                    lose_screen(screen)
+        # проверка на укус
         if monster:
             if pygame.sprite.collide_mask(player, monster) and not monster.bited:
+                monster_sound.play()
                 monster.bited = True
                 game_statistics['bites'] += 1
                 lifebar.health_lvl -= 10
