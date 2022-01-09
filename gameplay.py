@@ -20,6 +20,8 @@ monster_animate_img = PURPLE_SHARK_ANIMATION_img
 monster_x = 121
 monster_y = 51
 
+winning = False
+
 monster_respawn_time = 0
 
 game_statistics = {'steps': 0, 'monsters': 0, 'time': 0, 'bites': 0}
@@ -140,7 +142,7 @@ def check_background(player, map):
 # Игровой цикл
 def game_loop():
     global monster_animate_img, monster_x, monster_y, monster_img, monster
-    global monster_respawn_time, game_statistics
+    global monster_respawn_time, game_statistics, winning
     pygame.init()
     pygame.display.set_caption('Immersed')
 
@@ -240,6 +242,7 @@ def game_loop():
                     for i in coords:
                         monster = Enemy(*i, monster_img, monster_animate_img, 5,
                                         1, monster_x, monster_y)
+                        game_statistics['monsters'] += 1
                         if pygame.sprite.spritecollideany(monster, barrier_group):
                             monster.kill()
                             game_statistics['monsters'] -= 1
@@ -277,7 +280,8 @@ def game_loop():
                                       BATTERY_COLLECTED_text)
                     for button in buttons_pressed.keys():
                         buttons_pressed[button] = False
-            elif collide_obj.ship_num == 0:
+            elif collide_obj.ship_num == 0 and not winning:
+                winning = True
                 if all(progress):
                     win_screen(screen)
                 elif all(progress[:-1]) and not progress[-1]:
